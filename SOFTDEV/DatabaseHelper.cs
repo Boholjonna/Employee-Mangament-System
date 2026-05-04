@@ -79,7 +79,7 @@ namespace SOFTDEV
                 using var conn = GetConnection();
 
                 const string sql =
-                    "SELECT COUNT(*) FROM employees " +
+                    "SELECT COUNT(*) FROM employee " +
                     "WHERE username = @username AND password = @password";
 
                 using var cmd = new MySqlCommand(sql, conn);
