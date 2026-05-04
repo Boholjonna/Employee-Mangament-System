@@ -100,6 +100,72 @@ namespace SOFTDEV
             }
         }
 
+        // ── Get admin name ────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns the <c>name</c> column from the <c>admin</c> table that matches the supplied credentials.
+        /// </summary>
+        /// <param name="username">The username entered on the login screen.</param>
+        /// <param name="password">The plain-text password entered on the login screen.</param>
+        /// <returns>
+        /// The matching <c>name</c> string, or <see langword="null"/> if not found.
+        /// </returns>
+        public static string? GetAdminName(string username, string password)
+        {
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT name FROM admin " +
+                    "WHERE username = @username AND password = @password " +
+                    "LIMIT 1";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+
+                return cmd.ExecuteScalar() as string;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetAdminName error: {ex.Message}");
+                return null;
+            }
+        }
+
+        // ── Get all employees ─────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns all rows from the <c>employee</c> table as a list of
+        /// <see cref="EmployeeEntry"/> objects (name + position).
+        /// </summary>
+        public static List<EmployeeEntry> GetAllEmployees()
+        {
+            var list = new List<EmployeeEntry>();
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql = "SELECT name, position FROM employee ORDER BY name";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string name     = reader.IsDBNull(0) ? "" : reader.GetString(0);
+                    string position = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                    list.Add(new EmployeeEntry(name, position));
+                }
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetAllEmployees error: {ex.Message}");
+            }
+            return list;
+        }
+
         // ── Employee authentication ───────────────────────────────────────────
 
         /// <summary>
