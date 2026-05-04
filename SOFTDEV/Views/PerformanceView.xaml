@@ -1,0 +1,306 @@
+<UserControl x:Class="SOFTDEV.Views.PerformanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SOFTDEV.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="{StaticResource DarkBackgroundBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
+        </ScrollViewer.Resources>
+
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Main Content -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="Performance"
+                               Foreground="{StaticResource PurpleAccentBrush}"
+                               FontWeight="Bold"
+                               FontSize="28"
+                               VerticalAlignment="Center" />
+                    <Button Content="📥 Download Report"
+                            Style="{StaticResource PillButtonStyle}"
+                            Height="40"
+                            Padding="20,0"
+                            HorizontalAlignment="Right"
+                            Click="DownloadReport_Click" />
+                </Grid>
+
+                <!-- KPI Cards -->
+                <UniformGrid Rows="1" Columns="3" Margin="0,0,0,20">
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="0,0,4,0"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Overall Score"
+                                       Foreground="#aaaaaa"
+                                       FontSize="12"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Text="4.2/5.0"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="32" />
+                            <TextBlock Text="↑ 0.3 from last quarter"
+                                       Foreground="#4caf50"
+                                       FontSize="11"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,4,0"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Tasks On-Time"
+                                       Foreground="#aaaaaa"
+                                       FontSize="12"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Text="87%"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="32" />
+                            <TextBlock Text="↑ 5% from last month"
+                                       Foreground="#4caf50"
+                                       FontSize="11"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,0,0"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Team Rank"
+                                       Foreground="#aaaaaa"
+                                       FontSize="12"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Text="3rd"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="32" />
+                            <TextBlock Text="Out of 24 members"
+                                       Foreground="#888888"
+                                       FontSize="11"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Performance Trend Chart -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Performance Trend"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,16" />
+                        <Canvas x:Name="PerformanceTrendChart"
+                                Height="250"
+                                Background="Transparent" />
+                        <TextBlock Text="Last 6 Months"
+                                   Foreground="#888888"
+                                   FontSize="11"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,12,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- KPI Breakdown -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="KPI Breakdown"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,16" />
+                        <Canvas x:Name="KPIBarChart"
+                                Height="300"
+                                Background="Transparent" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- Sidebar -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+
+                <!-- Upcoming Reviews -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Upcoming Reviews"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <Border Background="#1a1a2e"
+                                CornerRadius="8"
+                                Padding="16"
+                                Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="Quarterly Review"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"
+                                           FontSize="14" />
+                                <TextBlock Text="May 30, 2026"
+                                           Foreground="{StaticResource PurpleAccentBrush}"
+                                           FontSize="12"
+                                           Margin="0,4,0,0" />
+                                <TextBlock Text="With: Manager Name"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,4,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#1a1a2e"
+                                CornerRadius="8"
+                                Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Annual Review"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"
+                                           FontSize="14" />
+                                <TextBlock Text="December 15, 2026"
+                                           Foreground="{StaticResource PurpleAccentBrush}"
+                                           FontSize="12"
+                                           Margin="0,4,0,0" />
+                                <TextBlock Text="With: Department Head"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,4,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Team Comparison -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Team Comparison"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <StackPanel Margin="0,0,0,12">
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Your Score"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11" />
+                                <TextBlock Text="4.2"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="13"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <ProgressBar Value="84" Maximum="100" Height="8" Background="#2a2a3e" Foreground="{StaticResource PurpleAccentBrush}" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Team Average"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11" />
+                                <TextBlock Text="3.8"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="13"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <ProgressBar Value="76" Maximum="100" Height="8" Background="#2a2a3e" Foreground="#888888" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Achievements -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Recent Achievements"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="🏆"
+                                       FontSize="24"
+                                       Margin="0,0,12,0" />
+                            <StackPanel>
+                                <TextBlock Text="Top Performer"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"
+                                           FontSize="13" />
+                                <TextBlock Text="Q1 2026"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <TextBlock Text="⭐"
+                                       FontSize="24"
+                                       Margin="0,0,12,0" />
+                            <StackPanel>
+                                <TextBlock Text="100% On-Time"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"
+                                           FontSize="13" />
+                                <TextBlock Text="March 2026"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎯"
+                                       FontSize="24"
+                                       Margin="0,0,12,0" />
+                            <StackPanel>
+                                <TextBlock Text="Goal Crusher"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"
+                                           FontSize="13" />
+                                <TextBlock Text="February 2026"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11" />
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+        </Grid>
+
+    </ScrollViewer>
+</UserControl>

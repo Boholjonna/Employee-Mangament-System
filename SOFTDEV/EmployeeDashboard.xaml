@@ -1,0 +1,113 @@
+<Window x:Class="SOFTDEV.EmployeeDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SOFTDEV"
+        mc:Ignorable="d"
+        Title="Employee Dashboard"
+        MinWidth="1400"
+        MinHeight="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="{StaticResource DarkBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Row 0: Header Section -->
+            <RowDefinition Height="*"    />  <!-- Row 1: Main Content   -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 0 — Header Section
+             ═══════════════════════════════════════════════════════════ -->
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+
+            <!-- ─────────────────────────────────────────────────
+                 Control Group (top-right: search, bell, user, avatar)
+                 ───────────────────────────────────────────────── -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="20,16,20,8">
+
+                <Button x:Name="SearchButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="🔍"
+                        Margin="0,0,8,0"
+                        Click="SearchButton_Click" />
+
+                <Button x:Name="NotificationButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="🔔"
+                        Margin="0,0,8,0"
+                        Click="NotificationButton_Click" />
+
+                <Button x:Name="UserNameButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="NAME"
+                        Width="80"
+                        Height="30"
+                        Margin="0,0,8,0"
+                        Click="UserNameButton_Click" />
+
+                <Button x:Name="AvatarButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="👤"
+                        Click="AvatarButton_Click" />
+
+            </StackPanel>
+
+            <!-- ─────────────────────────────────────────────────
+                 Navigation Bar
+                 ───────────────────────────────────────────────── -->
+            <UniformGrid x:Name="NavBarPanel"
+                         Rows="1"
+                         Margin="20,0,20,16">
+
+                <Button x:Name="DashboardButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Dashboard"
+                        Margin="0,0,4,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="TasksButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Tasks"
+                        Margin="4,0,4,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="AttendanceButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Attendance"
+                        Margin="4,0,4,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="PerformanceButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Performance"
+                        Margin="4,0,4,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="ReportsButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Reports"
+                        Margin="4,0,4,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="SettingsButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Settings"
+                        Margin="4,0,0,0"
+                        Click="NavButton_Click" />
+
+            </UniformGrid>
+
+        </StackPanel>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 1 — Main Content Area (ContentControl for view switching)
+             ═══════════════════════════════════════════════════════════ -->
+        <ContentControl x:Name="MainContentControl" Grid.Row="1" />
+
+    </Grid>
+</Window>

@@ -1,0 +1,461 @@
+<UserControl x:Class="SOFTDEV.Views.TasksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SOFTDEV.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="{StaticResource DarkBackgroundBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
+        </ScrollViewer.Resources>
+
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 Column 0 — Main Tasks Content
+                 ═══════════════════════════════════════════════════════════ -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+
+                <!-- Header Section -->
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="My Tasks"
+                               Foreground="{StaticResource PurpleAccentBrush}"
+                               FontWeight="Bold"
+                               FontSize="28"
+                               VerticalAlignment="Center" />
+                    <Button Content="+ New Task"
+                            Style="{StaticResource PillButtonStyle}"
+                            Height="40"
+                            Padding="24,0"
+                            HorizontalAlignment="Right"
+                            Click="AddTask_Click" />
+                </Grid>
+
+                <!-- Search and Filters -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Search Bar -->
+                        <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <TextBox x:Name="SearchTextBox"
+                                     Style="{StaticResource RoundedTextBoxStyle}"
+                                     Height="40"
+                                     TextChanged="SearchTextBox_TextChanged" />
+                            <TextBlock Text="🔍 Search tasks..."
+                                       Foreground="#666666"
+                                       FontSize="14"
+                                       IsHitTestVisible="False"
+                                       VerticalAlignment="Center"
+                                       Margin="16,0,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+
+                        <!-- Filters -->
+                        <UniformGrid Grid.Row="1" Rows="1" Columns="4">
+                            <StackPanel Margin="0,0,8,0">
+                                <TextBlock Text="Status"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="StatusFilterComboBox"
+                                          Height="36"
+                                          SelectionChanged="Filter_Changed">
+                                    <ComboBoxItem Content="All Status" IsSelected="True" />
+                                    <ComboBoxItem Content="Not Started" />
+                                    <ComboBoxItem Content="In Progress" />
+                                    <ComboBoxItem Content="Completed" />
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Margin="4,0,4,0">
+                                <TextBlock Text="Priority"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="PriorityFilterComboBox"
+                                          Height="36"
+                                          SelectionChanged="Filter_Changed">
+                                    <ComboBoxItem Content="All Priority" IsSelected="True" />
+                                    <ComboBoxItem Content="High" />
+                                    <ComboBoxItem Content="Medium" />
+                                    <ComboBoxItem Content="Low" />
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Margin="4,0,4,0">
+                                <TextBlock Text="Deadline"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="DeadlineFilterComboBox"
+                                          Height="36"
+                                          SelectionChanged="Filter_Changed">
+                                    <ComboBoxItem Content="All Deadlines" IsSelected="True" />
+                                    <ComboBoxItem Content="Overdue" />
+                                    <ComboBoxItem Content="This Week" />
+                                    <ComboBoxItem Content="This Month" />
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Margin="8,0,0,0">
+                                <TextBlock Text="Sort By"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="SortComboBox"
+                                          Height="36"
+                                          SelectionChanged="Sort_Changed">
+                                    <ComboBoxItem Content="Deadline (Nearest)" IsSelected="True" />
+                                    <ComboBoxItem Content="Priority (High)" />
+                                    <ComboBoxItem Content="Status" />
+                                    <ComboBoxItem Content="Created Date" />
+                                </ComboBox>
+                            </StackPanel>
+                        </UniformGrid>
+
+                    </Grid>
+                </Border>
+
+                <!-- Task Statistics -->
+                <UniformGrid Rows="1" Columns="4" Margin="0,0,0,20">
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="0,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Total Tasks"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock x:Name="TotalTasksText"
+                                       Text="24"
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="In Progress"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock x:Name="InProgressTasksText"
+                                       Text="8"
+                                       Foreground="#ff9800"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Completed"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock x:Name="CompletedTasksText"
+                                       Text="14"
+                                       Foreground="#4caf50"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,0,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Overdue"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock x:Name="OverdueTasksText"
+                                       Text="2"
+                                       Foreground="#f44336"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Task List -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Task List"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,16" />
+
+                        <ItemsControl x:Name="TaskListControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#1a1a2e"
+                                            CornerRadius="8"
+                                            Padding="20"
+                                            Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Row 0: Header -->
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <CheckBox Grid.Column="0"
+                                                          IsChecked="{Binding IsCompleted}"
+                                                          Style="{StaticResource RoleCheckBoxStyle}"
+                                                          Margin="0,0,12,0"
+                                                          VerticalAlignment="Center" />
+
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Foreground="White"
+                                                               FontWeight="Bold"
+                                                               FontSize="16" />
+                                                </StackPanel>
+
+                                                <Border Grid.Column="2"
+                                                        Background="{Binding PriorityColor}"
+                                                        CornerRadius="4"
+                                                        Padding="8,4"
+                                                        VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Priority}"
+                                                               Foreground="White"
+                                                               FontSize="10"
+                                                               FontWeight="Bold" />
+                                                </Border>
+                                            </Grid>
+
+                                            <!-- Row 1: Description -->
+                                            <TextBlock Grid.Row="1"
+                                                       Text="{Binding Description}"
+                                                       Foreground="#aaaaaa"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap"
+                                                       Margin="32,8,0,12" />
+
+                                            <!-- Row 2: Footer -->
+                                            <Grid Grid.Row="2" Margin="32,0,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                    <Border Background="{Binding StatusColor}"
+                                                            CornerRadius="4"
+                                                            Padding="8,4"
+                                                            Margin="0,0,8,0">
+                                                        <TextBlock Text="{Binding Status}"
+                                                                   Foreground="White"
+                                                                   FontSize="10"
+                                                                   FontWeight="Bold" />
+                                                    </Border>
+                                                    <TextBlock Text="{Binding DueDate}"
+                                                               Foreground="#888888"
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,12,0" />
+                                                    <TextBlock Text="{Binding Progress}"
+                                                               Foreground="{StaticResource PurpleAccentBrush}"
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center" />
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="Update Progress"
+                                                            Style="{StaticResource OutlinePillButtonStyle}"
+                                                            Height="32"
+                                                            Padding="12,0"
+                                                            Margin="0,0,8,0"
+                                                            Click="UpdateProgress_Click" />
+                                                    <Button Content="Add Note"
+                                                            Style="{StaticResource OutlinePillButtonStyle}"
+                                                            Height="32"
+                                                            Padding="12,0"
+                                                            Click="AddNote_Click" />
+                                                </StackPanel>
+                                            </Grid>
+
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 Column 1 — Charts and Analytics
+                 ═══════════════════════════════════════════════════════════ -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+
+                <!-- Completion Chart -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Task Completion"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+                        <Canvas x:Name="CompletionPieChart"
+                                Height="200"
+                                Background="Transparent" />
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <Ellipse Width="12" Height="12" Fill="#4caf50" Margin="0,0,8,0" />
+                                    <TextBlock Text="Completed" Foreground="#aaaaaa" FontSize="11" />
+                                </StackPanel>
+                                <TextBlock x:Name="CompletedPercentText"
+                                           Text="58%"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="18"
+                                           Margin="20,0,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <Ellipse Width="12" Height="12" Fill="#ff9800" Margin="0,0,8,0" />
+                                    <TextBlock Text="Pending" Foreground="#aaaaaa" FontSize="11" />
+                                </StackPanel>
+                                <TextBlock x:Name="PendingPercentText"
+                                           Text="42%"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="18"
+                                           Margin="20,0,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Completion Trend -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Completion Trend"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+                        <Canvas x:Name="TrendLineChart"
+                                Height="180"
+                                Background="Transparent" />
+                        <TextBlock Text="Last 6 Weeks"
+                                   Foreground="#888888"
+                                   FontSize="11"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Quick Stats -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Quick Stats"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="Average Completion Time"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="3.2 days"
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="On-Time Completion Rate"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="87%"
+                                       Foreground="#4caf50"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Tasks This Week"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="12 tasks"
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+        </Grid>
+
+    </ScrollViewer>
+</UserControl>
