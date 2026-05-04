@@ -51,7 +51,7 @@ namespace SOFTDEV
                     ErrorMessageText.Visibility = Visibility.Visible;
                     return;
                 }
-                OpenEmployeeDashboard();
+                OpenEmployeeDashboard(username);
             }
             else if (RoleManager.IsChecked == true)
             {
@@ -131,9 +131,9 @@ namespace SOFTDEV
             new AdminDashboard().Show();
         }
 
-        public void OpenEmployeeDashboard()
+        public void OpenEmployeeDashboard(string username)
         {
-            new EmployeeDashboard().Show();
+            new EmployeeDashboard(username).Show();
         }
     }
 }

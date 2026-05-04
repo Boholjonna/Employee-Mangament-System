@@ -13,10 +13,14 @@ namespace SOFTDEV
     /// </summary>
     public partial class EmployeeDashboard : Window
     {
+        public string LoggedInUsername { get; private set; }
+
         // ── Constructor ───────────────────────────────────────────────
-        public EmployeeDashboard()
+        public EmployeeDashboard(string username)
         {
             InitializeComponent();
+
+            LoggedInUsername = username;
 
             // Show Dashboard view by default
             NavigateToSection("Dashboard");
