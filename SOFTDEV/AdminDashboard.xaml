@@ -122,40 +122,47 @@
              ═══════════════════════════════════════════════════════════ -->
         <Grid x:Name="MainContentGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"   />
-                <ColumnDefinition Width="0.8*" />
-                <ColumnDefinition Width="1.2*" />
+                <ColumnDefinition Width="1.1*" />  <!-- Left: stats + attendance/leave -->
+                <ColumnDefinition Width="0.9*" />  <!-- Center: calendar -->
+                <ColumnDefinition Width="1.2*" />  <!-- Right: employee list -->
             </Grid.ColumnDefinitions>
 
             <!-- ─────────────────────────────────────────────────
-                 Column 0 — Left Column
+                 Column 0 — Left Column (Grid layout)
                  ───────────────────────────────────────────────── -->
-            <StackPanel Grid.Column="0" Margin="20,0,10,20">
+            <Grid Grid.Column="0" Margin="20,0,10,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />  <!-- Row 0: Greeting -->
+                    <RowDefinition Height="Auto" />  <!-- Row 1: Stats (2×2) -->
+                    <RowDefinition Height="*"    />  <!-- Row 2: Attendance + Leave Approvals -->
+                </Grid.RowDefinitions>
 
-                <!-- Greeting -->
-                <TextBlock x:Name="GreetingText"
+                <!-- Row 0: Greeting -->
+                <TextBlock Grid.Row="0"
+                           x:Name="GreetingText"
                            Text="Hello Admin Name! 👋"
                            Foreground="{StaticResource PurpleAccentBrush}"
                            FontWeight="Bold"
-                           FontSize="20"
+                           FontSize="22"
                            Margin="0,0,0,16" />
 
-                <!-- Stats Grid (2×2) -->
-                <UniformGrid x:Name="StatsGrid"
+                <!-- Row 1: Stats Grid (2×2) -->
+                <UniformGrid Grid.Row="1"
+                             x:Name="StatsGrid"
                              Rows="2"
                              Columns="2"
-                             Margin="0,0,0,12">
+                             Margin="0,0,0,16">
 
                     <!-- StatCard0: Number of Employees -->
                     <Border x:Name="StatCard0"
                             Background="{StaticResource CardBackgroundBrush}"
                             CornerRadius="12"
                             Margin="4"
-                            Padding="16">
+                            Padding="20">
                         <StackPanel>
                             <TextBlock Text="Number of Employees"
                                        Foreground="{StaticResource PurpleAccentBrush}"
-                                       FontSize="12"
+                                       FontSize="13"
                                        FontWeight="Bold" />
                             <Button Style="{StaticResource CircleButtonStyle}"
                                     Content="↻"
@@ -169,11 +176,11 @@
                             Background="{StaticResource CardBackgroundBrush}"
                             CornerRadius="12"
                             Margin="4"
-                            Padding="16">
+                            Padding="20">
                         <StackPanel>
                             <TextBlock Text="On Leave"
                                        Foreground="{StaticResource PurpleAccentBrush}"
-                                       FontSize="12"
+                                       FontSize="13"
                                        FontWeight="Bold" />
                             <Button Style="{StaticResource CircleButtonStyle}"
                                     Content="↻"
@@ -187,11 +194,11 @@
                             Background="{StaticResource CardBackgroundBrush}"
                             CornerRadius="12"
                             Margin="4"
-                            Padding="16">
+                            Padding="20">
                         <StackPanel>
                             <TextBlock Text="New Joinee"
                                        Foreground="{StaticResource PurpleAccentBrush}"
-                                       FontSize="12"
+                                       FontSize="13"
                                        FontWeight="Bold" />
                             <Button Style="{StaticResource CircleButtonStyle}"
                                     Content="↻"
@@ -205,11 +212,11 @@
                             Background="{StaticResource CardBackgroundBrush}"
                             CornerRadius="12"
                             Margin="4"
-                            Padding="16">
+                            Padding="20">
                         <StackPanel>
                             <TextBlock Text="Work Holidays / Others"
                                        Foreground="{StaticResource PurpleAccentBrush}"
-                                       FontSize="12"
+                                       FontSize="13"
                                        FontWeight="Bold" />
                             <Button Style="{StaticResource CircleButtonStyle}"
                                     Content="↻"
@@ -220,80 +227,126 @@
 
                 </UniformGrid>
 
-                <!-- Attendance Panel -->
-                <Border x:Name="AttendancePanel"
-                        Background="{StaticResource CardBackgroundBrush}"
-                        CornerRadius="12"
-                        Margin="0,0,0,12"
-                        Padding="16">
-                    <StackPanel>
-                        <TextBlock Text="Attendance"
-                                   Foreground="{StaticResource PurpleAccentBrush}"
-                                   FontWeight="Bold" />
-                        <TextBlock Text="May 23, 2025"
-                                   Foreground="White" />
-                        <TextBlock Text="09:00 AM"
-                                   Foreground="White" />
-                        <TextBlock Text="Clock In"
-                                   Foreground="{StaticResource PurpleAccentBrush}" />
-                        <StackPanel Orientation="Horizontal">
-                            <Button x:Name="ClockInOutButton"
-                                    Style="{StaticResource PillButtonStyle}"
-                                    Content="Clock IN/OUT"
-                                    Click="ClockInOut_Click" />
-                            <Button x:Name="LunchBreakButton"
-                                    Style="{StaticResource PillButtonStyle}"
-                                    Content="LUNCH BREAK"
-                                    Margin="8,0,0,0"
-                                    Click="LunchBreak_Click" />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
+                <!-- Row 2: Attendance + Leave Approvals (side by side) -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <!-- Leave Approvals Panel -->
-                <Border x:Name="LeaveApprovalsPanel"
-                        Background="{StaticResource CardBackgroundBrush}"
-                        CornerRadius="12"
-                        Padding="16">
-                    <StackPanel>
-                        <TextBlock Text="Leave Approvals"
-                                   Foreground="{StaticResource PurpleAccentBrush}"
-                                   FontWeight="Bold" />
-                        <StackPanel Orientation="Horizontal">
-                            <!-- Circle highlight -->
-                            <Border Width="56"
-                                    Height="56"
-                                    CornerRadius="28"
-                                    Background="{StaticResource PurpleAccentBrush}">
-                                <TextBlock Text="May 23"
-                                           Foreground="White"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </Border>
-                            <!-- Name and description -->
-                            <StackPanel Margin="12,0,0,0">
-                                <TextBlock Foreground="{StaticResource PurpleAccentBrush}"
-                                           FontWeight="Bold" />
-                                <TextBlock Foreground="#aaaaaa" />
+                    <!-- Attendance Panel -->
+                    <Border Grid.Column="0"
+                            x:Name="AttendancePanel"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,8,0"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Attendance"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       Margin="0,0,0,12" />
+                            <TextBlock Text="May 23, 2025"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       Margin="0,0,0,4" />
+                            <TextBlock Text="09:00 AM"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       Margin="0,0,0,8" />
+                            <TextBlock Text="Clock In"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontSize="13"
+                                       Margin="0,0,0,12" />
+                            <StackPanel Orientation="Vertical">
+                                <Button x:Name="ClockInOutButton"
+                                        Style="{StaticResource PillButtonStyle}"
+                                        Content="Clock IN/OUT"
+                                        Margin="0,0,0,8"
+                                        Click="ClockInOut_Click" />
+                                <Button x:Name="LunchBreakButton"
+                                        Style="{StaticResource PillButtonStyle}"
+                                        Content="LUNCH BREAK"
+                                        Click="LunchBreak_Click" />
                             </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </Border>
+                    </Border>
 
-            </StackPanel>
+                    <!-- Leave Approvals Panel -->
+                    <Border Grid.Column="1"
+                            x:Name="LeaveApprovalsPanel"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="8,0,4,0"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="Leave Approvals"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       Margin="0,0,0,16" />
+                            <StackPanel Orientation="Horizontal">
+                                <!-- Circle highlight -->
+                                <Border Width="64"
+                                        Height="64"
+                                        CornerRadius="32"
+                                        Background="{StaticResource PurpleAccentBrush}">
+                                    <TextBlock Text="May 23"
+                                               Foreground="White"
+                                               FontSize="13"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+                                <!-- Name and description -->
+                                <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Employee Name"
+                                               Foreground="{StaticResource PurpleAccentBrush}"
+                                               FontWeight="Bold"
+                                               FontSize="14" />
+                                    <TextBlock Text="Sick Leave"
+                                               Foreground="#aaaaaa"
+                                               FontSize="12" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+            </Grid>
 
             <!-- ─────────────────────────────────────────────────
                  Column 1 — Center Column (Calendar View)
                  ───────────────────────────────────────────────── -->
-            <StackPanel Grid.Column="1" Margin="10,0,10,20">
+            <Grid Grid.Column="1" Margin="10,0,10,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />  <!-- Row 0: spacer matching greeting height -->
+                    <RowDefinition Height="*"    />  <!-- Row 1: calendar card fills remaining -->
+                </Grid.RowDefinitions>
 
-                <Border Background="{StaticResource CardBackgroundBrush}"
+                <!-- Row 0: Invisible spacer matching the greeting TextBlock height -->
+                <TextBlock Grid.Row="0"
+                           Text=" "
+                           FontSize="22"
+                           FontWeight="Bold"
+                           Margin="0,0,0,16"
+                           Visibility="Hidden" />
+
+                <!-- Row 1: Calendar card — stretches to match stats + attendance rows -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource CardBackgroundBrush}"
                         CornerRadius="12"
-                        Padding="16">
-                    <StackPanel>
+                        Padding="20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />  <!-- Calendar header -->
+                            <RowDefinition Height="Auto" />  <!-- Day-of-week labels -->
+                            <RowDefinition Height="*"    />  <!-- Day cells -->
+                        </Grid.RowDefinitions>
 
                         <!-- Calendar Header: month label + prev/next buttons -->
-                        <Grid>
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -304,7 +357,7 @@
                                        Grid.Column="0"
                                        Foreground="{StaticResource PurpleAccentBrush}"
                                        FontWeight="Bold"
-                                       FontSize="16"
+                                       FontSize="18"
                                        HorizontalAlignment="Left"
                                        VerticalAlignment="Center" />
 
@@ -320,25 +373,25 @@
                                     Style="{StaticResource CircleButtonStyle}"
                                     Content="▶"
                                     Click="NextMonth_Click" />
-
                         </Grid>
 
                         <!-- Day-of-week header row -->
-                        <UniformGrid x:Name="DayHeaderRow"
+                        <UniformGrid Grid.Row="1"
+                                     x:Name="DayHeaderRow"
                                      Columns="7"
-                                     Margin="0,8,0,4">
-                            <TextBlock Text="Sun" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Mon" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Tue" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Wed" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Thu" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Fri" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
-                            <TextBlock Text="Sat" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                                     Margin="0,0,0,8">
+                            <TextBlock Text="Sun" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Mon" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Tue" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Wed" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Thu" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Fri" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
+                            <TextBlock Text="Sat" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="13" />
                         </UniformGrid>
 
-                        <!-- Calendar days grid -->
-                        <ItemsControl x:Name="CalendarDaysControl"
-                                      Margin="0,4,0,0">
+                        <!-- Calendar days grid — fills remaining height -->
+                        <ItemsControl Grid.Row="2"
+                                      x:Name="CalendarDaysControl">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <UniformGrid Columns="7" />
@@ -346,9 +399,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Width="36"
-                                            Height="36"
-                                            Margin="2"
+                                    <Border Margin="3"
                                             Background="Transparent"
                                             CornerRadius="0">
                                         <Border.Style>
@@ -358,14 +409,14 @@
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
                                                         <Setter Property="Background" Value="{StaticResource PurpleAccentBrush}" />
-                                                        <Setter Property="CornerRadius" Value="18" />
+                                                        <Setter Property="CornerRadius" Value="20" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
                                         <TextBlock Text="{Binding Day}"
                                                    Foreground="White"
-                                                   FontSize="13"
+                                                   FontSize="15"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center">
                                             <TextBlock.Style>
@@ -383,10 +434,10 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                    </StackPanel>
+                    </Grid>
                 </Border>
 
-            </StackPanel>
+            </Grid>
 
             <!-- ─────────────────────────────────────────────────
                  Column 2 — Right Column (Employee List)
