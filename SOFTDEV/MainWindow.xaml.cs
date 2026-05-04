@@ -33,7 +33,28 @@ namespace SOFTDEV
             string password = PasswordBox.Password;
 
             // TODO: Pass to AuthService
-            OpenAdminDashboard();
+            // Navigate based on selected role
+            if (RoleEmployee.IsChecked == true)
+            {
+                OpenEmployeeDashboard();
+            }
+            else if (RoleManager.IsChecked == true)
+            {
+                // TODO: Open Manager Dashboard
+                MessageBox.Show("Manager Dashboard coming soon!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+            else if (RoleAdmin.IsChecked == true)
+            {
+                OpenAdminDashboard();
+            }
+            else
+            {
+                ErrorMessageText.Text = "Please select a user role.";
+                ErrorMessageText.Visibility = Visibility.Visible;
+                return;
+            }
+
             Close();
         }
 
@@ -103,6 +124,11 @@ namespace SOFTDEV
         public void OpenAdminDashboard()
         {
             new AdminDashboard().Show();
+        }
+
+        public void OpenEmployeeDashboard()
+        {
+            new EmployeeDashboard().Show();
         }
     }
 }

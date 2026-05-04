@@ -1,0 +1,418 @@
+<UserControl x:Class="SOFTDEV.Views.AttendanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SOFTDEV.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="{StaticResource DarkBackgroundBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
+        </ScrollViewer.Resources>
+
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 Column 0 — Main Attendance Content
+                 ═══════════════════════════════════════════════════════════ -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+
+                <!-- Header -->
+                <TextBlock Text="Attendance"
+                           Foreground="{StaticResource PurpleAccentBrush}"
+                           FontWeight="Bold"
+                           FontSize="28"
+                           Margin="0,0,0,20" />
+
+                <!-- Clock In/Out Section -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Today's Attendance"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       Margin="0,0,0,12" />
+                            <TextBlock x:Name="CurrentDateText"
+                                       Text="Monday, May 4, 2026"
+                                       Foreground="White"
+                                       FontSize="14"
+                                       Margin="0,0,0,8" />
+                            <TextBlock x:Name="CurrentTimeText"
+                                       Text="09:45 AM"
+                                       Foreground="#aaaaaa"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Margin="0,0,0,12" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Status: "
+                                           Foreground="#aaaaaa"
+                                           FontSize="13" />
+                                <TextBlock x:Name="ClockStatusText"
+                                           Text="Clocked In"
+                                           Foreground="#4caf50"
+                                           FontWeight="Bold"
+                                           FontSize="13" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <TextBlock Text="Clock In Time: "
+                                           Foreground="#aaaaaa"
+                                           FontSize="12" />
+                                <TextBlock x:Name="ClockInTimeText"
+                                           Text="08:30 AM"
+                                           Foreground="White"
+                                           FontSize="12" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Button x:Name="ClockInOutButton"
+                                    Content="🕐 Clock Out"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Height="50"
+                                    Width="160"
+                                    FontSize="16"
+                                    Margin="0,0,0,12"
+                                    Click="ClockInOut_Click" />
+                            <Button Content="☕ Break"
+                                    Style="{StaticResource OutlinePillButtonStyle}"
+                                    Height="44"
+                                    Width="160"
+                                    Click="Break_Click" />
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+                <!-- Monthly Summary -->
+                <UniformGrid Rows="1" Columns="4" Margin="0,0,0,20">
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="0,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Present Days"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="22"
+                                       Foreground="#4caf50"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                            <TextBlock Text="This Month"
+                                       Foreground="#666666"
+                                       FontSize="10"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Absent Days"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="1"
+                                       Foreground="#f44336"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                            <TextBlock Text="This Month"
+                                       Foreground="#666666"
+                                       FontSize="10"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,4,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Late Arrivals"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="2"
+                                       Foreground="#ff9800"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                            <TextBlock Text="This Month"
+                                       Foreground="#666666"
+                                       FontSize="10"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4,0,0,0"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Attendance Rate"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="96%"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                            <TextBlock Text="This Month"
+                                       Foreground="#666666"
+                                       FontSize="10"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- Attendance History -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,16">
+                            <TextBlock Text="Attendance History"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ComboBox x:Name="MonthFilterComboBox"
+                                          Width="140"
+                                          Height="32"
+                                          SelectionChanged="MonthFilter_Changed">
+                                    <ComboBoxItem Content="May 2026" IsSelected="True" />
+                                    <ComboBoxItem Content="April 2026" />
+                                    <ComboBoxItem Content="March 2026" />
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Attendance Table -->
+                        <Border BorderBrush="#2a2a3e" BorderThickness="1" CornerRadius="8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Table Header -->
+                                <Border Grid.Row="0" Background="#1a1a2e" CornerRadius="8,8,0,0" Padding="16,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Date" Foreground="{StaticResource PurpleAccentBrush}" FontWeight="Bold" FontSize="12" />
+                                        <TextBlock Grid.Column="1" Text="Clock In" Foreground="{StaticResource PurpleAccentBrush}" FontWeight="Bold" FontSize="12" />
+                                        <TextBlock Grid.Column="2" Text="Clock Out" Foreground="{StaticResource PurpleAccentBrush}" FontWeight="Bold" FontSize="12" />
+                                        <TextBlock Grid.Column="3" Text="Hours" Foreground="{StaticResource PurpleAccentBrush}" FontWeight="Bold" FontSize="12" />
+                                        <TextBlock Grid.Column="4" Text="Status" Foreground="{StaticResource PurpleAccentBrush}" FontWeight="Bold" FontSize="12" />
+                                    </Grid>
+                                </Border>
+
+                                <!-- Table Body -->
+                                <ItemsControl Grid.Row="1" x:Name="AttendanceHistoryControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="#2a2a3e" BorderThickness="0,1,0,0" Padding="16,12">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="2*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                        <ColumnDefinition Width="1.5*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding Date}" Foreground="White" FontSize="12" />
+                                                    <TextBlock Grid.Column="1" Text="{Binding ClockIn}" Foreground="#aaaaaa" FontSize="12" />
+                                                    <TextBlock Grid.Column="2" Text="{Binding ClockOut}" Foreground="#aaaaaa" FontSize="12" />
+                                                    <TextBlock Grid.Column="3" Text="{Binding Hours}" Foreground="White" FontSize="12" />
+                                                    <Border Grid.Column="4" Background="{Binding StatusColor}" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left">
+                                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="10" FontWeight="Bold" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </Grid>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- ═══════════════════════════════════════════════════════════
+                 Column 1 — Sidebar
+                 ═══════════════════════════════════════════════════════════ -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+
+                <!-- Leave Balance -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Leave Balance"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <StackPanel Margin="0,0,0,16">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Vacation Days"
+                                           Foreground="#aaaaaa"
+                                           FontSize="12" />
+                                <TextBlock Text="12 / 20"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="14"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <ProgressBar Value="60" Maximum="100" Height="8" Background="#2a2a3e" Foreground="#4caf50" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,16">
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Sick Leave"
+                                           Foreground="#aaaaaa"
+                                           FontSize="12" />
+                                <TextBlock Text="8 / 10"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="14"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <ProgressBar Value="80" Maximum="100" Height="8" Background="#2a2a3e" Foreground="#ff9800" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Personal Days"
+                                           Foreground="#aaaaaa"
+                                           FontSize="12" />
+                                <TextBlock Text="3 / 5"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="14"
+                                           HorizontalAlignment="Right" />
+                            </Grid>
+                            <ProgressBar Value="60" Maximum="100" Height="8" Background="#2a2a3e" Foreground="{StaticResource PurpleAccentBrush}" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Request Leave -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Request Leave"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <TextBlock Text="Leave Type"
+                                   Foreground="#aaaaaa"
+                                   FontSize="11"
+                                   Margin="0,0,0,4" />
+                        <ComboBox x:Name="LeaveTypeComboBox"
+                                  Height="36"
+                                  Margin="0,0,0,12">
+                            <ComboBoxItem Content="Vacation" IsSelected="True" />
+                            <ComboBoxItem Content="Sick Leave" />
+                            <ComboBoxItem Content="Personal Day" />
+                            <ComboBoxItem Content="Other" />
+                        </ComboBox>
+
+                        <TextBlock Text="Start Date"
+                                   Foreground="#aaaaaa"
+                                   FontSize="11"
+                                   Margin="0,0,0,4" />
+                        <DatePicker x:Name="StartDatePicker"
+                                    Height="36"
+                                    Margin="0,0,0,12" />
+
+                        <TextBlock Text="End Date"
+                                   Foreground="#aaaaaa"
+                                   FontSize="11"
+                                   Margin="0,0,0,4" />
+                        <DatePicker x:Name="EndDatePicker"
+                                    Height="36"
+                                    Margin="0,0,0,12" />
+
+                        <TextBlock Text="Reason"
+                                   Foreground="#aaaaaa"
+                                   FontSize="11"
+                                   Margin="0,0,0,4" />
+                        <TextBox x:Name="LeaveReasonTextBox"
+                                 Style="{StaticResource RoundedTextBoxStyle}"
+                                 Height="80"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,16" />
+
+                        <Button Content="Submit Request"
+                                Style="{StaticResource PillButtonStyle}"
+                                Height="44"
+                                Click="SubmitLeaveRequest_Click" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Attendance Chart -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Monthly Trend"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+                        <Canvas x:Name="AttendanceTrendChart"
+                                Height="180"
+                                Background="Transparent" />
+                        <TextBlock Text="Last 30 Days"
+                                   Foreground="#888888"
+                                   FontSize="11"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+        </Grid>
+
+    </ScrollViewer>
+</UserControl>
