@@ -28,14 +28,29 @@ namespace SOFTDEV
                 return;
             }
 
-            string username = UsernameTextBox.Text;
-            string email    = EmailTextBox.Text;
+            string username = UsernameTextBox.Text.Trim();
+            string email    = EmailTextBox.Text.Trim();
             string password = PasswordBox.Password;
 
-            // TODO: Pass to AuthService
-            // Navigate based on selected role
-            if (RoleEmployee.IsChecked == true)
+            // ── Database authentication ──────────────────────────────
+            if (RoleAdmin.IsChecked == true)
             {
+                if (!DatabaseHelper.AuthenticateAdmin(username, password))
+                {
+                    ErrorMessageText.Text = "Invalid admin username or password.";
+                    ErrorMessageText.Visibility = Visibility.Visible;
+                    return;
+                }
+                OpenAdminDashboard();
+            }
+            else if (RoleEmployee.IsChecked == true)
+            {
+                if (!DatabaseHelper.AuthenticateEmployee(username, password))
+                {
+                    ErrorMessageText.Text = "Invalid employee username or password.";
+                    ErrorMessageText.Visibility = Visibility.Visible;
+                    return;
+                }
                 OpenEmployeeDashboard();
             }
             else if (RoleManager.IsChecked == true)
@@ -43,10 +58,6 @@ namespace SOFTDEV
                 // TODO: Open Manager Dashboard
                 MessageBox.Show("Manager Dashboard coming soon!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
-            }
-            else if (RoleAdmin.IsChecked == true)
-            {
-                OpenAdminDashboard();
             }
             else
             {
@@ -61,16 +72,10 @@ namespace SOFTDEV
         private ValidationResult ValidateInputs()
         {
             if (string.IsNullOrWhiteSpace(UsernameTextBox.Text))
-                return ValidationResult.Fail("Employee User Name is required.");
+                return ValidationResult.Fail("Username is required.");
 
-            if (string.IsNullOrWhiteSpace(EmailTextBox.Text))
-                return ValidationResult.Fail("Email ID is required.");
-
-            if (!EmailValidator.IsValidEmailFormat(EmailTextBox.Text))
-                return ValidationResult.Fail("Email ID is not a valid format.");
-
-            if (PasswordBox.Password.Length < 8)
-                return ValidationResult.Fail("Password must be at least 8 characters.");
+            if (PasswordBox.Password.Length < 1)
+                return ValidationResult.Fail("Password is required.");
 
             return ValidationResult.Ok();
         }
