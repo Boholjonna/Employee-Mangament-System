@@ -42,7 +42,8 @@ namespace SOFTDEV
                     ErrorMessageText.Visibility = Visibility.Visible;
                     return;
                 }
-                OpenAdminDashboard(adminUsername);
+                string adminName = DatabaseHelper.GetAdminName(username, password) ?? adminUsername;
+                OpenAdminDashboard(adminName);
             }
             else if (RoleEmployee.IsChecked == true)
             {

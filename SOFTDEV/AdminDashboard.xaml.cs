@@ -27,20 +27,21 @@ namespace SOFTDEV
         {
             InitializeComponent();
 
-            GreetingText.Text = $"Hello, {username}! 👋";
+            GreetingText.Text = $"Hello, {username}!";
 
-            Employees = new List<EmployeeEntry>
-            {
-                new("Alice Johnson",  "Software Engineer"),
-                new("Bob Martinez",   "Product Manager"),
-                new("Carol White",    "UX Designer"),
-                new("David Kim",      "QA Engineer"),
-                new("Eva Patel",      "DevOps Engineer"),
-            };
-
-            EmployeeListControl.ItemsSource = Employees;
+            LoadEmployees();
 
             RefreshCalendar();
+        }
+
+        // ── Employee list ─────────────────────────────────────────────
+
+        /// <summary>Fetches all employees from the database and binds them to the list.</summary>
+        private void LoadEmployees()
+        {
+            Employees = DatabaseHelper.GetAllEmployees();
+            EmployeeListControl.ItemsSource = null;   // force refresh
+            EmployeeListControl.ItemsSource = Employees;
         }
 
         // ── Calendar generation ───────────────────────────────────────
@@ -176,7 +177,7 @@ namespace SOFTDEV
         // ── Right Column (Employee List) handlers ─────────────────────
         private void EmployeeListRefresh_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(nameof(EmployeeListRefresh_Click));
+            LoadEmployees();
         }
     }
 }
