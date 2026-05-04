@@ -1,0 +1,473 @@
+<Window x:Class="SOFTDEV.AdminDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SOFTDEV"
+        mc:Ignorable="d"
+        Title="Admin Dashboard"
+        MinWidth="1200"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="{StaticResource DarkBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Row 0: Header Section -->
+            <RowDefinition Height="*"    />  <!-- Row 1: Main Content   -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 0 — Header Section
+             ═══════════════════════════════════════════════════════════ -->
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+
+            <!-- ─────────────────────────────────────────────────
+                 Control Group (top-right: search, bell, user, avatar)
+                 ───────────────────────────────────────────────── -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="20,16,20,8">
+
+                <Button x:Name="SearchButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="🔍"
+                        Margin="0,0,8,0"
+                        Click="SearchButton_Click" />
+
+                <Button x:Name="NotificationButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="🔔"
+                        Margin="0,0,8,0"
+                        Click="NotificationButton_Click" />
+
+                <Button x:Name="UserNameButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="NAME"
+                        Width="80"
+                        Height="30"
+                        Margin="0,0,8,0"
+                        Click="UserNameButton_Click" />
+
+                <Button x:Name="AvatarButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="👤"
+                        Click="AvatarButton_Click" />
+
+            </StackPanel>
+
+            <!-- ─────────────────────────────────────────────────
+                 Navigation Bar
+                 ───────────────────────────────────────────────── -->
+            <StackPanel x:Name="NavBarPanel"
+                        Orientation="Horizontal"
+                        Margin="20,0,20,16">
+
+                <!-- Overview (icon + label) -->
+                <Button x:Name="OverviewButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="▲" Margin="0,0,4,0" />
+                            <TextBlock Text="OVERVIEW" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="EmployeesButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Employees"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="AttendanceButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Attendance"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="ToDoButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="To Do"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="ReportsButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Reports"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="LeavesButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Leaves"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+                <Button x:Name="SettingsButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="Settings"
+                        Margin="0,0,8,0"
+                        Click="NavButton_Click" />
+
+            </StackPanel>
+
+        </StackPanel>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 1 — Main Content Area
+             ═══════════════════════════════════════════════════════════ -->
+        <Grid x:Name="MainContentGrid" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"   />
+                <ColumnDefinition Width="0.8*" />
+                <ColumnDefinition Width="1.2*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ─────────────────────────────────────────────────
+                 Column 0 — Left Column
+                 ───────────────────────────────────────────────── -->
+            <StackPanel Grid.Column="0" Margin="20,0,10,20">
+
+                <!-- Greeting -->
+                <TextBlock x:Name="GreetingText"
+                           Text="Hello Admin Name! 👋"
+                           Foreground="{StaticResource PurpleAccentBrush}"
+                           FontWeight="Bold"
+                           FontSize="20"
+                           Margin="0,0,0,16" />
+
+                <!-- Stats Grid (2×2) -->
+                <UniformGrid x:Name="StatsGrid"
+                             Rows="2"
+                             Columns="2"
+                             Margin="0,0,0,12">
+
+                    <!-- StatCard0: Number of Employees -->
+                    <Border x:Name="StatCard0"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Number of Employees"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold" />
+                            <Button Style="{StaticResource CircleButtonStyle}"
+                                    Content="↻"
+                                    HorizontalAlignment="Right"
+                                    Click="StatCardRefresh_Click" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- StatCard1: On Leave -->
+                    <Border x:Name="StatCard1"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="On Leave"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold" />
+                            <Button Style="{StaticResource CircleButtonStyle}"
+                                    Content="↻"
+                                    HorizontalAlignment="Right"
+                                    Click="StatCardRefresh_Click" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- StatCard2: New Joinee -->
+                    <Border x:Name="StatCard2"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="New Joinee"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold" />
+                            <Button Style="{StaticResource CircleButtonStyle}"
+                                    Content="↻"
+                                    HorizontalAlignment="Right"
+                                    Click="StatCardRefresh_Click" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- StatCard3: Work Holidays / Others -->
+                    <Border x:Name="StatCard3"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="12"
+                            Margin="4"
+                            Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="Work Holidays / Others"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold" />
+                            <Button Style="{StaticResource CircleButtonStyle}"
+                                    Content="↻"
+                                    HorizontalAlignment="Right"
+                                    Click="StatCardRefresh_Click" />
+                        </StackPanel>
+                    </Border>
+
+                </UniformGrid>
+
+                <!-- Attendance Panel -->
+                <Border x:Name="AttendancePanel"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Margin="0,0,0,12"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Attendance"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="May 23, 2025"
+                                   Foreground="White" />
+                        <TextBlock Text="09:00 AM"
+                                   Foreground="White" />
+                        <TextBlock Text="Clock In"
+                                   Foreground="{StaticResource PurpleAccentBrush}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button x:Name="ClockInOutButton"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Content="Clock IN/OUT"
+                                    Click="ClockInOut_Click" />
+                            <Button x:Name="LunchBreakButton"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Content="LUNCH BREAK"
+                                    Margin="8,0,0,0"
+                                    Click="LunchBreak_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Leave Approvals Panel -->
+                <Border x:Name="LeaveApprovalsPanel"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Leave Approvals"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Circle highlight -->
+                            <Border Width="56"
+                                    Height="56"
+                                    CornerRadius="28"
+                                    Background="{StaticResource PurpleAccentBrush}">
+                                <TextBlock Text="May 23"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <!-- Name and description -->
+                            <StackPanel Margin="12,0,0,0">
+                                <TextBlock Foreground="{StaticResource PurpleAccentBrush}"
+                                           FontWeight="Bold" />
+                                <TextBlock Foreground="#aaaaaa" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- ─────────────────────────────────────────────────
+                 Column 1 — Center Column (Calendar View)
+                 ───────────────────────────────────────────────── -->
+            <StackPanel Grid.Column="1" Margin="10,0,10,20">
+
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="16">
+                    <StackPanel>
+
+                        <!-- Calendar Header: month label + prev/next buttons -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock x:Name="CalendarMonthLabel"
+                                       Grid.Column="0"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+
+                            <Button x:Name="PrevMonthButton"
+                                    Grid.Column="1"
+                                    Style="{StaticResource CircleButtonStyle}"
+                                    Content="◀"
+                                    Margin="0,0,4,0"
+                                    Click="PrevMonth_Click" />
+
+                            <Button x:Name="NextMonthButton"
+                                    Grid.Column="2"
+                                    Style="{StaticResource CircleButtonStyle}"
+                                    Content="▶"
+                                    Click="NextMonth_Click" />
+
+                        </Grid>
+
+                        <!-- Day-of-week header row -->
+                        <UniformGrid x:Name="DayHeaderRow"
+                                     Columns="7"
+                                     Margin="0,8,0,4">
+                            <TextBlock Text="Sun" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Mon" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Tue" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Wed" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Thu" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Fri" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                            <TextBlock Text="Sat" HorizontalAlignment="Center" Foreground="#aaaaaa" FontSize="11" />
+                        </UniformGrid>
+
+                        <!-- Calendar days grid -->
+                        <ItemsControl x:Name="CalendarDaysControl"
+                                      Margin="0,4,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="7" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="36"
+                                            Height="36"
+                                            Margin="2"
+                                            Background="Transparent"
+                                            CornerRadius="0">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="CornerRadius" Value="0" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource PurpleAccentBrush}" />
+                                                        <Setter Property="CornerRadius" Value="18" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Day}"
+                                                   Foreground="White"
+                                                   FontSize="13"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Day}" Value="0">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- ─────────────────────────────────────────────────
+                 Column 2 — Right Column (Employee List)
+                 ───────────────────────────────────────────────── -->
+            <Border Grid.Column="2"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    CornerRadius="12"
+                    Margin="10,0,20,20"
+                    Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />  <!-- Row 0: Header label -->
+                        <RowDefinition Height="*"    />  <!-- Row 1: Scrollable list -->
+                        <RowDefinition Height="Auto" />  <!-- Row 2: Footer button -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Section header -->
+                    <TextBlock Grid.Row="0"
+                               Text="My Employees"
+                               Foreground="{StaticResource PurpleAccentBrush}"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Margin="0,0,0,12" />
+
+                    <!-- Row 1: Scrollable employee list -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer.Resources>
+                            <!-- Reference CustomScrollbarStyle without redefining it inline -->
+                            <Style TargetType="ScrollBar"
+                                   BasedOn="{StaticResource CustomScrollbarStyle}" />
+                        </ScrollViewer.Resources>
+
+                        <ItemsControl x:Name="EmployeeListControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="0,6,0,6">
+
+                                        <!-- Circle avatar -->
+                                        <Border Width="36"
+                                                Height="36"
+                                                CornerRadius="18"
+                                                Background="{StaticResource PurpleAccentBrush}"
+                                                Margin="0,0,12,0">
+                                            <TextBlock Text="👤"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Name and position -->
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Name}"
+                                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                                       FontWeight="Bold"
+                                                       FontSize="13" />
+                                            <TextBlock Text="{Binding Position}"
+                                                       Foreground="#aaaaaa"
+                                                       FontSize="11" />
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </ScrollViewer>
+
+                    <!-- Row 2: Footer refresh button -->
+                    <Button Grid.Row="2"
+                            x:Name="EmployeeListRefreshButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="↻"
+                            HorizontalAlignment="Right"
+                            Margin="0,8,0,0"
+                            Click="EmployeeListRefresh_Click" />
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+</Window>
