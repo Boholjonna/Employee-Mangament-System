@@ -35,13 +35,14 @@ namespace SOFTDEV
             // ── Database authentication ──────────────────────────────
             if (RoleAdmin.IsChecked == true)
             {
-                if (!DatabaseHelper.AuthenticateAdmin(username, password))
+                string? adminUsername = DatabaseHelper.GetAdminUsername(username, password);
+                if (adminUsername == null)
                 {
                     ErrorMessageText.Text = "Invalid admin username or password.";
                     ErrorMessageText.Visibility = Visibility.Visible;
                     return;
                 }
-                OpenAdminDashboard();
+                OpenAdminDashboard(adminUsername);
             }
             else if (RoleEmployee.IsChecked == true)
             {
@@ -126,9 +127,9 @@ namespace SOFTDEV
 
         // ── Navigation ───────────────────────────────────────────────────────
 
-        public void OpenAdminDashboard()
+        public void OpenAdminDashboard(string username)
         {
-            new AdminDashboard().Show();
+            new AdminDashboard(username).Show();
         }
 
         public void OpenEmployeeDashboard(string username)

@@ -66,6 +66,40 @@ namespace SOFTDEV
             }
         }
 
+        // ── Get admin username ────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns the username from the <c>admin</c> table that matches the supplied credentials.
+        /// </summary>
+        /// <param name="username">The username entered on the login screen.</param>
+        /// <param name="password">The plain-text password entered on the login screen.</param>
+        /// <returns>
+        /// The matching <c>username</c> string, or <see langword="null"/> if not found.
+        /// </returns>
+        public static string? GetAdminUsername(string username, string password)
+        {
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT username FROM admin " +
+                    "WHERE username = @username AND password = @password " +
+                    "LIMIT 1";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+
+                return cmd.ExecuteScalar() as string;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetAdminUsername error: {ex.Message}");
+                return null;
+            }
+        }
+
         // ── Employee authentication ───────────────────────────────────────────
 
         /// <summary>

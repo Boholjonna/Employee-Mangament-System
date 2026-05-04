@@ -23,9 +23,11 @@ namespace SOFTDEV
         public List<CalendarDayItem> CalendarDays { get; set; } = new();
 
         // ── Constructor ───────────────────────────────────────────────
-        public AdminDashboard()
+        public AdminDashboard(string username)
         {
             InitializeComponent();
+
+            GreetingText.Text = $"Hello, {username}! 👋";
 
             Employees = new List<EmployeeEntry>
             {
