@@ -1,0 +1,65 @@
+<Window x:Class="SOFTDEV.CalendarYearPickerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select Year"
+        Width="340"
+        Height="360"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource DarkBackgroundBrush}"
+        FontFamily="Segoe UI">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Title + range nav -->
+            <RowDefinition Height="*"    />  <!-- Year grid -->
+            <RowDefinition Height="Auto" />  <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Header: range label + prev/next decade ── -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*"    />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="PrevDecadeButton"
+                    Grid.Column="0"
+                    Style="{StaticResource CircleButtonStyle}"
+                    Content="◀"
+                    Click="PrevDecade_Click" />
+
+            <TextBlock x:Name="DecadeRangeLabel"
+                       Grid.Column="1"
+                       Foreground="{StaticResource PurpleAccentBrush}"
+                       FontWeight="Bold"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+
+            <Button x:Name="NextDecadeButton"
+                    Grid.Column="2"
+                    Style="{StaticResource CircleButtonStyle}"
+                    Content="▶"
+                    Click="NextDecade_Click" />
+        </Grid>
+
+        <!-- ── Year grid (4 columns × 3 rows = 12 years per decade page) ── -->
+        <UniformGrid x:Name="YearGrid"
+                     Grid.Row="1"
+                     Rows="3"
+                     Columns="4"
+                     Margin="0,0,0,16" />
+
+        <!-- ── Cancel button ── -->
+        <Button Grid.Row="2"
+                x:Name="CancelButton"
+                Style="{StaticResource PillButtonStyle}"
+                Content="Cancel"
+                Width="80"
+                Opacity="0.5"
+                HorizontalAlignment="Right"
+                Click="Cancel_Click" />
+    </Grid>
+</Window>

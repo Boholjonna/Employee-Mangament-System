@@ -32,36 +32,48 @@ namespace SOFTDEV.Tests
     // ---------------------------------------------------------------------------
     internal static class StaHelper
     {
+        // WPF's BAML/pack-URI stream loading (PackagePart) is not thread-safe
+        // when multiple STA threads call InitializeComponent() concurrently.
+        // Serializing all STA executions with a single lock prevents the
+        // ArgumentOutOfRangeException in PackagePart.CleanUpRequestedStreamsList.
+        private static readonly object _staLock = new();
+
         /// <summary>
         /// Executes <paramref name="func"/> on a fresh STA thread and returns its result.
         /// Any exception thrown inside <paramref name="func"/> is re-thrown on the
         /// calling thread so xUnit can capture it normally.
+        ///
+        /// A global lock ensures only one STA thread runs at a time, preventing
+        /// WPF BAML stream race conditions when tests run in parallel.
         /// </summary>
         public static T RunOnSta<T>(Func<T> func)
         {
-            T result = default!;
-            Exception? caught = null;
-
-            var thread = new Thread(() =>
+            lock (_staLock)
             {
-                try
+                T result = default!;
+                Exception? caught = null;
+
+                var thread = new Thread(() =>
                 {
-                    result = func();
-                }
-                catch (Exception ex)
-                {
-                    caught = ex;
-                }
-            });
+                    try
+                    {
+                        result = func();
+                    }
+                    catch (Exception ex)
+                    {
+                        caught = ex;
+                    }
+                });
 
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
 
-            if (caught is not null)
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(caught).Throw();
+                if (caught is not null)
+                    System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(caught).Throw();
 
-            return result;
+                return result;
+            }
         }
 
         /// <summary>
@@ -340,7 +352,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 Assert.Equal(1200, dashboard.MinWidth);
                 Assert.Equal(700,  dashboard.MinHeight);
@@ -407,10 +419,11 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
-                // Locate the NavBarPanel by name
-                var navBar = (StackPanel)dashboard.FindName("NavBarPanel");
+                // Locate the NavBarPanel by name.
+                // NavBarPanel is a UniformGrid in the XAML (equal-width columns).
+                var navBar = (System.Windows.Controls.Primitives.UniformGrid)dashboard.FindName("NavBarPanel");
                 Assert.NotNull(navBar);
 
                 // Collect all direct Button children
@@ -475,7 +488,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 var listControl = (ItemsControl)dashboard.FindName("EmployeeListControl");
                 Assert.NotNull(listControl);
@@ -511,7 +524,7 @@ namespace SOFTDEV.Tests
                 var mainWindow = new MainWindow();
 
                 // Should not throw — stub implementation calls new AdminDashboard().Show()
-                var ex = Record.Exception(() => mainWindow.OpenAdminDashboard());
+                var ex = Record.Exception(() => mainWindow.OpenAdminDashboard("TestUser"));
                 Assert.Null(ex);
 
                 // Clean up: close the main window; the AdminDashboard opened by
@@ -537,7 +550,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -566,7 +579,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 var panel = dashboard.FindName("AttendancePanel") as Border;
                 Assert.NotNull(panel);
@@ -607,7 +620,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 var label = dashboard.FindName("CalendarMonthLabel") as TextBlock;
                 Assert.NotNull(label);
@@ -641,7 +654,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 // DayHeaderRow has x:Name="DayHeaderRow" in the XAML
                 var dayHeaderRow = dashboard.FindName("DayHeaderRow") as UniformGrid;
@@ -677,7 +690,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 var listControl = dashboard.FindName("EmployeeListControl") as ItemsControl;
                 Assert.NotNull(listControl);

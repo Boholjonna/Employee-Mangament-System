@@ -6,4 +6,4 @@ namespace SOFTDEV;
 /// <c>Day == 0</c> indicates a leading padding cell outside the current month.
 /// </para>
 /// </summary>
-public record CalendarDayItem(int Day, bool IsCurrentMonth, bool IsHighlighted);
+public record CalendarDayItem(int Day, bool IsCurrentMonth, bool IsHighlighted, bool IsSelected = false);

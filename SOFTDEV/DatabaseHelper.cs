@@ -134,6 +134,29 @@ namespace SOFTDEV
             }
         }
 
+        // ── Get employee count ────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns the total number of rows in the <c>employee</c> table.
+        /// Returns -1 if the query fails (e.g. DB unavailable).
+        /// </summary>
+        public static int GetEmployeeCount()
+        {
+            try
+            {
+                using var conn = GetConnection();
+                const string sql = "SELECT COUNT(*) FROM employee";
+                using var cmd = new MySqlCommand(sql, conn);
+                long count = (long)(cmd.ExecuteScalar() ?? 0L);
+                return (int)count;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetEmployeeCount error: {ex.Message}");
+                return -1;
+            }
+        }
+
         // ── Get all employees ─────────────────────────────────────────────────
 
         /// <summary>

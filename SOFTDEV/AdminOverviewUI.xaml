@@ -1,0 +1,412 @@
+<Window x:Class="SOFTDEV.AdminOverviewUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SOFTDEV"
+        mc:Ignorable="d"
+        Title="Admin Overview"
+        MinWidth="1200"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        Background="{StaticResource DarkBackgroundBrush}"
+        FontFamily="Segoe UI">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Row 0: Header (TopNavBar + TabMenu) -->
+            <RowDefinition Height="*"    />  <!-- Row 1: Main Content               -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 0 — Header Section (TopNavBar + TabMenu)
+             ═══════════════════════════════════════════════════════════ -->
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+
+            <!-- ─────────────────────────────────────────────────
+                 TopNavBar — company name left, controls right
+                 ───────────────────────────────────────────────── -->
+            <DockPanel Margin="20,16,20,8" LastChildFill="False">
+
+                <!-- Left: Company name / logo -->
+                <TextBlock DockPanel.Dock="Left"
+                           Text="COMPANY NAME/LOGO"
+                           Foreground="{StaticResource PurpleAccentBrush}"
+                           FontWeight="Bold"
+                           FontSize="18"
+                           VerticalAlignment="Center" />
+
+                <!-- Right: Search, Notifications, Avatar, Username -->
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <Button x:Name="SearchButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="🔍"
+                            Margin="0,0,8,0" />
+
+                    <Button x:Name="NotificationButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="🔔"
+                            Margin="0,0,8,0" />
+
+                    <Border x:Name="AvatarBorder"
+                            Width="36"
+                            Height="36"
+                            CornerRadius="18"
+                            Background="{StaticResource PurpleAccentBrush}"
+                            Margin="0,0,8,0">
+                        <TextBlock Text="👤"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+
+                    <TextBlock x:Name="UsernameLabel"
+                               Foreground="White"
+                               VerticalAlignment="Center" />
+
+                </StackPanel>
+
+            </DockPanel>
+
+            <!-- ─────────────────────────────────────────────────
+                 TabMenu — equal-width buttons spanning full width
+                 ───────────────────────────────────────────────── -->
+            <UniformGrid x:Name="TabMenuPanel"
+                         Rows="1"
+                         Margin="20,0,20,16">
+
+                <!-- Back button — returns to Admin Dashboard -->
+                <Button x:Name="BackButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="◀ Back"
+                        Margin="0,0,4,0"
+                        Click="BackButton_Click" />
+
+                <!-- OVERVIEW — active tab -->
+                <Button x:Name="OverviewTabButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Content="🏠 OVERVIEW"
+                        Background="{StaticResource PurpleAccentBrush}"
+                        Opacity="1.0"
+                        Margin="4,0,4,0" />
+
+                <!-- My Team — inactive -->
+                <Button x:Name="MyTeamTabButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource PurpleAccentBrush}"
+                        Opacity="0.4"
+                        Margin="4,0,4,0">
+                    <Button.Content>My Team</Button.Content>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Button.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1.0" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Button.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.4" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <!-- Attendance — inactive -->
+                <Button x:Name="AttendanceTabButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource PurpleAccentBrush}"
+                        Opacity="0.4"
+                        Margin="4,0,4,0">
+                    <Button.Content>Attendance</Button.Content>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Button.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1.0" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Button.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.4" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <!-- Task Management — inactive -->
+                <Button x:Name="TaskManagementTabButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource PurpleAccentBrush}"
+                        Opacity="0.4"
+                        Margin="4,0,4,0">
+                    <Button.Content>Task Management</Button.Content>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Button.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1.0" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Button.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.4" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <!-- Reports — inactive -->
+                <Button x:Name="ReportsTabButton"
+                        Style="{StaticResource PillButtonStyle}"
+                        Background="{StaticResource PurpleAccentBrush}"
+                        Opacity="0.4"
+                        Margin="4,0,0,0">
+                    <Button.Content>Reports</Button.Content>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="Button.MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="1.0" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Button.MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                     To="0.4" Duration="0:0:0.15" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
+                </Button>
+
+            </UniformGrid>
+
+        </StackPanel>
+
+        <!-- ═══════════════════════════════════════════════════════════
+             Row 1 — Main Content Area (ScrollViewer + 3-column Grid)
+             ═══════════════════════════════════════════════════════════ -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Resources>
+                <Style TargetType="ScrollBar"
+                       BasedOn="{StaticResource CustomScrollbarStyle}" />
+            </ScrollViewer.Resources>
+
+            <Grid x:Name="MainContentGrid" Margin="20,0,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.1*" />  <!-- Column 0: Task Overview (donut chart) -->
+                    <ColumnDefinition Width="1.4*" />  <!-- Column 1: Employee Performances (graph) -->
+                    <ColumnDefinition Width="0.9*" />  <!-- Column 2: Financial Cards -->
+                </Grid.ColumnDefinitions>
+
+                <!-- ─────────────────────────────────────────────────
+                     Column 0 — TaskOverviewCard (Donut Chart)
+                     ───────────────────────────────────────────────── -->
+                <Border x:Name="TaskOverviewCard"
+                        Grid.Column="0"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="18"
+                        Margin="0,0,10,0"
+                        Padding="20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15"
+                                          Opacity="0.4"
+                                          Color="Black"
+                                          ShadowDepth="0" />
+                    </Border.Effect>
+                    <StackPanel>
+
+                        <!-- Card title -->
+                        <TextBlock Text="Task Overview"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <!-- Donut chart canvas -->
+                        <Canvas x:Name="DonutCanvas"
+                                Width="200"
+                                Height="200"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,16" />
+
+                        <!-- Fallback text (shown when no data) -->
+                        <TextBlock x:Name="DonutFallbackText"
+                                   Text="No data available"
+                                   Foreground="#aaaaaa"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"
+                                   Visibility="Collapsed" />
+
+                        <!-- Legend panel (populated in code-behind) -->
+                        <StackPanel x:Name="LegendPanel"
+                                    Margin="0,8,0,0" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- ─────────────────────────────────────────────────
+                     Column 1 — EmployeePerformancesCard (Line Graph)
+                     ───────────────────────────────────────────────── -->
+                <Border x:Name="EmployeePerformancesCard"
+                        Grid.Column="1"
+                        Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="18"
+                        Margin="10,0,10,0"
+                        Padding="20">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15"
+                                          Opacity="0.4"
+                                          Color="Black"
+                                          ShadowDepth="0" />
+                    </Border.Effect>
+                    <StackPanel>
+
+                        <!-- Card title -->
+                        <TextBlock Text="Employee Performances"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <!-- Performance graph canvas -->
+                        <Canvas x:Name="GraphCanvas"
+                                Width="400"
+                                Height="250"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,8" />
+
+                        <!-- Fallback text (shown when no data) -->
+                        <TextBlock x:Name="GraphFallbackText"
+                                   Text="No data available"
+                                   Foreground="#aaaaaa"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"
+                                   Visibility="Collapsed" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- ─────────────────────────────────────────────────
+                     Column 2 — FinancialCards (Monthly Salary + Payroll)
+                     ───────────────────────────────────────────────── -->
+                <StackPanel x:Name="FinancialCardsPanel"
+                            Grid.Column="2"
+                            Orientation="Vertical"
+                            Margin="10,0,0,0">
+
+                    <!-- Monthly Salary Card -->
+                    <Border x:Name="MonthlySalaryCard"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="18"
+                            Margin="0,0,0,16"
+                            Padding="20">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15"
+                                              Opacity="0.4"
+                                              Color="Black"
+                                              ShadowDepth="0" />
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal">
+
+                            <!-- Circular peso icon -->
+                            <Border Width="48"
+                                    Height="48"
+                                    CornerRadius="24"
+                                    Background="{StaticResource PurpleAccentBrush}">
+                                <TextBlock Text="₱"
+                                           Foreground="White"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+
+                            <!-- Label + amount -->
+                            <StackPanel Orientation="Vertical"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="Monthly Salary"
+                                           Foreground="#aaaaaa"
+                                           FontSize="13" />
+                                <TextBlock x:Name="MonthlySalaryAmount"
+                                           Foreground="White"
+                                           FontSize="22"
+                                           FontWeight="Bold" />
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Payroll Summary Card -->
+                    <Border x:Name="PayrollSummaryCard"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="18"
+                            Padding="20">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15"
+                                              Opacity="0.4"
+                                              Color="Black"
+                                              ShadowDepth="0" />
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal">
+
+                            <!-- Circular peso icon -->
+                            <Border Width="48"
+                                    Height="48"
+                                    CornerRadius="24"
+                                    Background="{StaticResource PurpleAccentBrush}">
+                                <TextBlock Text="₱"
+                                           Foreground="White"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+
+                            <!-- Label + amount -->
+                            <StackPanel Orientation="Vertical"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="Payroll Summary"
+                                           Foreground="#aaaaaa"
+                                           FontSize="13" />
+                                <TextBlock x:Name="PayrollSummaryAmount"
+                                           Foreground="White"
+                                           FontSize="22"
+                                           FontWeight="Bold" />
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</Window>
