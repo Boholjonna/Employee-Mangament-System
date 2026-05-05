@@ -166,8 +166,8 @@
 
         <!-- Circle Button Style -->
         <Style x:Key="CircleButtonStyle" TargetType="Button">
-            <Setter Property="Width"      Value="36" />
-            <Setter Property="Height"     Value="36" />
+            <Setter Property="Width"      Value="44" />
+            <Setter Property="Height"     Value="44" />
             <Setter Property="Background" Value="#2a2a3e" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Cursor"     Value="Hand" />
@@ -176,7 +176,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="Bd"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="18"
+                                CornerRadius="22"
                                 Width="{TemplateBinding Width}"
                                 Height="{TemplateBinding Height}">
                             <ContentPresenter HorizontalAlignment="Center"

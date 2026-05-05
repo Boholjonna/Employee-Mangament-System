@@ -311,12 +311,78 @@
                 </Border>
 
                 <!-- ─────────────────────────────────────────────────
-                     Column 2 — FinancialCards (Monthly Salary + Payroll)
+                     Column 2 — FinancialCards (Employee selector + Monthly Salary + Payroll)
                      ───────────────────────────────────────────────── -->
                 <StackPanel x:Name="FinancialCardsPanel"
                             Grid.Column="2"
                             Orientation="Vertical"
                             Margin="10,0,0,0">
+
+                    <!-- Employee selector card -->
+                    <Border Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="18"
+                            Margin="0,0,0,16"
+                            Padding="20">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15" Opacity="0.4" Color="Black" ShadowDepth="0" />
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Select Employee"
+                                       Foreground="#aaaaaa"
+                                       FontSize="13"
+                                       Margin="0,0,0,8" />
+                            <ComboBox x:Name="EmployeeComboBox"
+                                      Background="White"
+                                      Foreground="Black"
+                                      BorderBrush="#7b61ff"
+                                      BorderThickness="1"
+                                      FontSize="14"
+                                      Padding="8,6"
+                                      SelectionChanged="EmployeeComboBox_SelectionChanged" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Position Card -->
+                    <Border x:Name="PositionCard"
+                            Background="{StaticResource CardBackgroundBrush}"
+                            CornerRadius="18"
+                            Margin="0,0,0,16"
+                            Padding="20">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="15"
+                                              Opacity="0.4"
+                                              Color="Black"
+                                              ShadowDepth="0" />
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal">
+
+                            <!-- Circular person icon -->
+                            <Border Width="48"
+                                    Height="48"
+                                    CornerRadius="24"
+                                    Background="{StaticResource PurpleAccentBrush}">
+                                <TextBlock Text="👤"
+                                           FontSize="20"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </Border>
+
+                            <!-- Label + value -->
+                            <StackPanel Orientation="Vertical"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="Position"
+                                           Foreground="#aaaaaa"
+                                           FontSize="13" />
+                                <TextBlock x:Name="PositionLabel"
+                                           Text="—"
+                                           Foreground="White"
+                                           FontSize="22"
+                                           FontWeight="Bold" />
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Border>
 
                     <!-- Monthly Salary Card -->
                     <Border x:Name="MonthlySalaryCard"
@@ -353,6 +419,7 @@
                                            Foreground="#aaaaaa"
                                            FontSize="13" />
                                 <TextBlock x:Name="MonthlySalaryAmount"
+                                           Text="₱ —"
                                            Foreground="White"
                                            FontSize="22"
                                            FontWeight="Bold" />
@@ -391,10 +458,11 @@
                             <StackPanel Orientation="Vertical"
                                         Margin="12,0,0,0"
                                         VerticalAlignment="Center">
-                                <TextBlock Text="Payroll Summary"
+                                <TextBlock Text="Payroll"
                                            Foreground="#aaaaaa"
                                            FontSize="13" />
                                 <TextBlock x:Name="PayrollSummaryAmount"
+                                           Text="₱ —"
                                            Foreground="White"
                                            FontSize="22"
                                            FontWeight="Bold" />
