@@ -189,6 +189,44 @@ namespace SOFTDEV
             return list;
         }
 
+        // ── Get employees with financials ─────────────────────────────────────
+
+        /// <summary>
+        /// Returns all employees including their salary and payroll figures.
+        /// </summary>
+        public static List<EmployeeFinancialInfo> GetAllEmployeesWithFinancials()
+        {
+            var list = new List<EmployeeFinancialInfo>();
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT id, name, position, salary, payroll " +
+                    "FROM employee ORDER BY name";
+
+                using var cmd    = new MySqlCommand(sql, conn);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(new EmployeeFinancialInfo
+                    {
+                        Id       = reader.IsDBNull(0) ? 0      : reader.GetInt32(0),
+                        Name     = reader.IsDBNull(1) ? ""     : reader.GetString(1),
+                        Position = reader.IsDBNull(2) ? ""     : reader.GetString(2),
+                        Salary   = reader.IsDBNull(3) ? 0m     : reader.GetDecimal(3),
+                        Payroll  = reader.IsDBNull(4) ? 0m     : reader.GetDecimal(4),
+                    });
+                }
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetAllEmployeesWithFinancials error: {ex.Message}");
+            }
+            return list;
+        }
+
         // ── Employee authentication ───────────────────────────────────────────
 
         /// <summary>

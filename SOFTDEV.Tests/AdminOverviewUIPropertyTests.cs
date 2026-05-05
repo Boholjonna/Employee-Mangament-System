@@ -269,7 +269,8 @@ namespace SOFTDEV.Tests
                 WpfAppBootstrap.EnsureInitialized();
 
                 var window = new AdminOverviewUI("TestUser");
-                var tabMenuPanel = (StackPanel)window.FindName("TabMenuPanel");
+                // TabMenuPanel is a UniformGrid (not StackPanel) in the XAML.
+                var tabMenuPanel = (System.Windows.Controls.Primitives.UniformGrid)window.FindName("TabMenuPanel");
 
                 if (tabMenuPanel is null)
                 {

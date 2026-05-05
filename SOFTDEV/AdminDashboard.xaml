@@ -119,9 +119,17 @@
         </StackPanel>
 
         <!-- ═══════════════════════════════════════════════════════════
-             Row 1 — Main Content Area
+             Row 1 — Main Content Area (wrapped in ScrollViewer)
              ═══════════════════════════════════════════════════════════ -->
-        <Grid x:Name="MainContentGrid" Grid.Row="1">
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer.Resources>
+                <Style TargetType="ScrollBar"
+                       BasedOn="{StaticResource CustomScrollbarStyle}" />
+            </ScrollViewer.Resources>
+
+        <Grid x:Name="MainContentGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.1*" />  <!-- Left: stats + attendance/leave -->
                 <ColumnDefinition Width="0.9*" />  <!-- Center: calendar -->
@@ -135,7 +143,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />  <!-- Row 0: Greeting -->
                     <RowDefinition Height="Auto" />  <!-- Row 1: Stats (2×2) -->
-                    <RowDefinition Height="*"    />  <!-- Row 2: Attendance + Leave Approvals -->
+                    <RowDefinition Height="Auto" />  <!-- Row 2: Attendance + Leave Approvals -->
                 </Grid.RowDefinitions>
 
                 <!-- Row 0: Greeting -->
@@ -235,7 +243,7 @@
                 </UniformGrid>
 
                 <!-- Row 2: Attendance + Leave Approvals (side by side) -->
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -332,7 +340,7 @@
             <Grid Grid.Column="1" Margin="10,0,10,20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />  <!-- Row 0: spacer matching greeting height -->
-                    <RowDefinition Height="*"    />  <!-- Row 1: calendar card fills remaining -->
+                    <RowDefinition Height="Auto" />  <!-- Row 1: calendar card -->
                 </Grid.RowDefinitions>
 
                 <!-- Row 0: Invisible spacer matching the greeting TextBlock height -->
@@ -496,7 +504,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />  <!-- Row 0: Header label -->
-                        <RowDefinition Height="*"    />  <!-- Row 1: Scrollable list -->
+                        <RowDefinition Height="Auto" />  <!-- Row 1: List (auto-sized) -->
                         <RowDefinition Height="Auto" />  <!-- Row 2: Footer button -->
                     </Grid.RowDefinitions>
 
@@ -565,6 +573,8 @@
             </Border>
 
         </Grid>
+
+        </ScrollViewer>
 
     </Grid>
 </Window>

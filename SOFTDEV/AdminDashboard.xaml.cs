@@ -140,6 +140,12 @@ namespace SOFTDEV
                 this.Hide();
                 overviewUI.Show();
             }
+            else if (sender == EmployeesButton)
+            {
+                var employeesView = new AdminEmployeesView(_username, this);
+                this.Hide();
+                employeesView.Show();
+            }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }
 

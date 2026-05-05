@@ -3,6 +3,22 @@ using System.Windows.Media;
 namespace SOFTDEV
 {
     /// <summary>
+    /// Carries an employee's id, name, position, salary and payroll
+    /// for display in the AdminOverviewUI financial cards.
+    /// </summary>
+    public class EmployeeFinancialInfo
+    {
+        public int     Id       { get; set; }
+        public string  Name     { get; set; } = string.Empty;
+        public string  Position { get; set; } = string.Empty;
+        public decimal Salary   { get; set; }
+        public decimal Payroll  { get; set; }
+
+        /// <summary>Used as the display string in the ComboBox.</summary>
+        public override string ToString() => Name;
+    }
+
+    /// <summary>
     /// Represents a task item in the employee's task list.
     /// </summary>
     public class TaskItem

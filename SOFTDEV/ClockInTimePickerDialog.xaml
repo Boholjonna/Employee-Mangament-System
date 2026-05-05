@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select Clock-In Time"
         Width="320"
-        Height="280"
+        Height="300"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Background="{StaticResource DarkBackgroundBrush}"
@@ -86,18 +86,30 @@
                         VerticalAlignment="Center">
                 <Button x:Name="AmButton"
                         Style="{StaticResource PillButtonStyle}"
-                        Content="AM"
-                        Width="52"
-                        Height="32"
+                        Width="60"
+                        Height="36"
                         Margin="0,0,0,6"
-                        Click="AmPm_Click" />
+                        Click="AmPm_Click">
+                    <TextBlock Text="AM"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Button>
                 <Button x:Name="PmButton"
                         Style="{StaticResource PillButtonStyle}"
-                        Content="PM"
-                        Width="52"
-                        Height="32"
+                        Width="60"
+                        Height="36"
                         Opacity="0.4"
-                        Click="AmPm_Click" />
+                        Click="AmPm_Click">
+                    <TextBlock Text="PM"
+                               FontSize="14"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Button>
             </StackPanel>
 
         </StackPanel>

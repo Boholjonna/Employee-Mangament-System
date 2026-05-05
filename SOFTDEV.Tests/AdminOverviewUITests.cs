@@ -225,32 +225,35 @@ namespace SOFTDEV.Tests
 
                 var window = new AdminOverviewUI("TestUser");
 
-                var tabMenuPanel = (StackPanel)window.FindName("TabMenuPanel");
+                // TabMenuPanel is a UniformGrid (not StackPanel) in the XAML.
+                var tabMenuPanel = (System.Windows.Controls.Primitives.UniformGrid)window.FindName("TabMenuPanel");
                 Assert.NotNull(tabMenuPanel);
 
-                // Must have exactly 5 children, all Buttons
-                Assert.Equal(5, tabMenuPanel.Children.Count);
+                // Must have exactly 6 children, all Buttons:
+                // index 0 = Back, 1 = OVERVIEW (active), 2 = My Team,
+                // 3 = Attendance, 4 = Task Management, 5 = Reports
+                Assert.Equal(6, tabMenuPanel.Children.Count);
                 foreach (var child in tabMenuPanel.Children)
                     Assert.IsType<Button>(child);
 
                 var buttons = tabMenuPanel.Children.Cast<Button>().ToList();
 
-                // Button order: index 0 = OVERVIEW, 1 = My Team, 2 = Attendance,
-                //               3 = Task Management, 4 = Reports
                 string GetButtonText(Button b) =>
                     b.Content as string ?? b.Content?.ToString() ?? string.Empty;
 
-                Assert.Contains("OVERVIEW", GetButtonText(buttons[0]));
-                Assert.Equal("My Team",         GetButtonText(buttons[1]));
-                Assert.Equal("Attendance",       GetButtonText(buttons[2]));
-                Assert.Equal("Task Management",  GetButtonText(buttons[3]));
-                Assert.Equal("Reports",          GetButtonText(buttons[4]));
+                // Button order
+                Assert.Contains("Back",              GetButtonText(buttons[0]));
+                Assert.Contains("OVERVIEW",          GetButtonText(buttons[1]));
+                Assert.Equal("My Team",              GetButtonText(buttons[2]));
+                Assert.Equal("Attendance",           GetButtonText(buttons[3]));
+                Assert.Equal("Task Management",      GetButtonText(buttons[4]));
+                Assert.Equal("Reports",              GetButtonText(buttons[5]));
 
                 // OVERVIEW button content must include the home emoji
-                Assert.Contains("🏠", GetButtonText(buttons[0]));
+                Assert.Contains("🏠", GetButtonText(buttons[1]));
 
-                // Non-active buttons (indices 1–4) must have Opacity ≈ 0.4
-                for (int i = 1; i <= 4; i++)
+                // Non-active buttons (indices 2–5) must have Opacity ≈ 0.4
+                for (int i = 2; i <= 5; i++)
                     Assert.InRange(buttons[i].Opacity, 0.35, 0.45);
 
                 window.Close();
@@ -457,9 +460,14 @@ namespace SOFTDEV.Tests
 
                 var window = new AdminOverviewUI("TestUser");
 
-                // Set _financialData to null and rebind
-                SetPrivateField(window, "_financialData", null);
-                InvokePrivateMethod(window, "BindFinancialData");
+                // The actual field is _employees (List<EmployeeFinancialInfo>) and the
+                // method is BindFinancialCards(EmployeeFinancialInfo? emp).
+                // Passing null directly invokes the placeholder path that sets "₱ —".
+                var bindMethod = typeof(AdminOverviewUI).GetMethod(
+                    "BindFinancialCards",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                Assert.NotNull(bindMethod);
+                bindMethod!.Invoke(window, new object?[] { null });
 
                 var monthlySalaryAmount  = (TextBlock)window.FindName("MonthlySalaryAmount");
                 var payrollSummaryAmount = (TextBlock)window.FindName("PayrollSummaryAmount");

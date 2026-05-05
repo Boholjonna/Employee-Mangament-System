@@ -622,17 +622,19 @@ namespace SOFTDEV.Tests
 
                 var dashboard = new AdminDashboard("TestUser");
 
-                var label = dashboard.FindName("CalendarMonthLabel") as TextBlock;
+                // CalendarMonthLabel is a Button (not a TextBlock) — its Content is set
+                // in code-behind to a "MMMM yyyy" formatted string.
+                var label = dashboard.FindName("CalendarMonthLabel") as Button;
                 Assert.NotNull(label);
 
-                var text = label.Text;
+                var text = label!.Content as string;
                 Assert.False(string.IsNullOrEmpty(text),
-                    "CalendarMonthLabel.Text must not be null or empty.");
+                    "CalendarMonthLabel.Content must not be null or empty.");
 
                 // Must match "[Month] [Year]" — e.g. "May 2025"
                 var pattern = new System.Text.RegularExpressions.Regex(@"^[A-Za-z]+ \d{4}$");
-                Assert.True(pattern.IsMatch(text),
-                    $"CalendarMonthLabel.Text '{text}' does not match the expected pattern '[Month] [Year]'.");
+                Assert.True(pattern.IsMatch(text!),
+                    $"CalendarMonthLabel.Content '{text}' does not match the expected pattern '[Month] [Year]'.");
 
                 dashboard.Close();
             });
