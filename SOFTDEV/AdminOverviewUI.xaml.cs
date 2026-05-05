@@ -14,23 +14,16 @@ namespace SOFTDEV
     public class DonutSegment
     {
         public string Label      { get; set; } = string.Empty;
-        public double Percentage { get; set; }   // 0–100
-        public string Color      { get; set; } = "#ffffff"; // hex color string
+        public double Percentage { get; set; }
+        public string Color      { get; set; } = "#ffffff";
     }
 
     /// <summary>One line series in the performance graph.</summary>
     public class PerformanceSeries
     {
-        public string           Label  { get; set; } = string.Empty;
-        public string           Color  { get; set; } = "#ffffff";
-        public List<Point>      Points { get; set; } = new();
-    }
-
-    /// <summary>Financial summary data for the two financial cards.</summary>
-    public class FinancialData
-    {
-        public decimal? MonthlySalary  { get; set; }
-        public decimal? PayrollSummary { get; set; }
+        public string      Label  { get; set; } = string.Empty;
+        public string      Color  { get; set; } = "#ffffff";
+        public List<Point> Points { get; set; } = new();
     }
 
     // ── Window code-behind ────────────────────────────────────────────────────
@@ -45,36 +38,23 @@ namespace SOFTDEV
         // ── Private fields ────────────────────────────────────────────
         private string _username;
         private Window? _ownerDashboard;
-        private List<DonutSegment>?    _taskSegments;
+        private List<DonutSegment>?      _taskSegments;
         private List<PerformanceSeries>? _performanceSeries;
-        private FinancialData?         _financialData;
+        private List<EmployeeFinancialInfo> _employees = new();
 
         // ── Constructor ───────────────────────────────────────────────
-
-        /// <summary>
-        /// Opens the AdminOverviewUI window for the given <paramref name="username"/>.
-        /// Loads all data and draws charts after the window is initialized.
-        /// </summary>
-        /// <param name="username">The username to display in the TopNavBar.</param>
-        /// <param name="ownerDashboard">
-        /// Optional reference to the <see cref="AdminDashboard"/> that opened this window.
-        /// When provided, the Back button will close this window and restore the dashboard.
-        /// </param>
         public AdminOverviewUI(string username, Window? ownerDashboard = null)
         {
             InitializeComponent();
 
-            _username        = username;
-            _ownerDashboard  = ownerDashboard;
+            _username       = username;
+            _ownerDashboard = ownerDashboard;
             UsernameLabel.Text = username;
 
-            // Load data
             LoadTaskData();
             LoadPerformanceData();
-            LoadFinancialData();
+            LoadEmployeeFinancials();
 
-            // Draw charts once the window layout has been measured so that
-            // ActualWidth / ActualHeight are available on the canvases.
             Loaded += (_, _) =>
             {
                 DrawDonutChart();
@@ -92,9 +72,6 @@ namespace SOFTDEV
 
         // ── Data loading ──────────────────────────────────────────────
 
-        /// <summary>
-        /// Populates <see cref="_taskSegments"/> with the four default task-status segments.
-        /// </summary>
         private void LoadTaskData()
         {
             _taskSegments = new List<DonutSegment>
@@ -106,9 +83,6 @@ namespace SOFTDEV
             };
         }
 
-        /// <summary>
-        /// Populates <see cref="_performanceSeries"/> with two default employee series.
-        /// </summary>
         private void LoadPerformanceData()
         {
             _performanceSeries = new List<PerformanceSeries>
@@ -119,12 +93,8 @@ namespace SOFTDEV
                     Color  = "#7b61ff",
                     Points = new List<Point>
                     {
-                        new Point(0, 72),
-                        new Point(1, 78),
-                        new Point(2, 75),
-                        new Point(3, 82),
-                        new Point(4, 88),
-                        new Point(5, 85),
+                        new Point(0, 72), new Point(1, 78), new Point(2, 75),
+                        new Point(3, 82), new Point(4, 88), new Point(5, 85),
                     }
                 },
                 new PerformanceSeries
@@ -133,53 +103,52 @@ namespace SOFTDEV
                     Color  = "#4ade80",
                     Points = new List<Point>
                     {
-                        new Point(0, 60),
-                        new Point(1, 65),
-                        new Point(2, 70),
-                        new Point(3, 68),
-                        new Point(4, 74),
-                        new Point(5, 80),
+                        new Point(0, 60), new Point(1, 65), new Point(2, 70),
+                        new Point(3, 68), new Point(4, 74), new Point(5, 80),
                     }
                 },
             };
         }
 
         /// <summary>
-        /// Populates <see cref="_financialData"/> with default values and binds them to the UI.
+        /// Fetches all employees with salary/payroll from the DB and populates the ComboBox.
         /// </summary>
-        private void LoadFinancialData()
+        private void LoadEmployeeFinancials()
         {
-            _financialData = new FinancialData
-            {
-                MonthlySalary  = 125000m,
-                PayrollSummary = 980000m,
-            };
+            _employees = DatabaseHelper.GetAllEmployeesWithFinancials();
 
-            BindFinancialData();
+            EmployeeComboBox.ItemsSource   = null;
+            EmployeeComboBox.DisplayMemberPath = "Name";
+            EmployeeComboBox.ItemsSource   = _employees;
+
+            if (_employees.Count > 0)
+                EmployeeComboBox.SelectedIndex = 0;
+            else
+                BindFinancialCards(null);
         }
 
-        // ── Financial card binding ────────────────────────────────────
+        // ── Employee ComboBox selection ───────────────────────────────
 
-        /// <summary>
-        /// Formats and assigns financial amounts to the two FinancialCard amount labels.
-        /// Displays "₱ —" when <see cref="_financialData"/> is null.
-        /// </summary>
-        private void BindFinancialData()
+        private void EmployeeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_financialData is null)
+            if (EmployeeComboBox.SelectedItem is EmployeeFinancialInfo emp)
+                BindFinancialCards(emp);
+        }
+
+        /// <summary>Updates the position, salary and payroll labels for the selected employee.</summary>
+        private void BindFinancialCards(EmployeeFinancialInfo? emp)
+        {
+            if (emp is null)
             {
-                MonthlySalaryAmount.Text  = "₱ —";
-                PayrollSummaryAmount.Text = "₱ —";
+                PositionLabel.Text            = "—";
+                MonthlySalaryAmount.Text      = "₱ —";
+                PayrollSummaryAmount.Text     = "₱ —";
                 return;
             }
 
-            MonthlySalaryAmount.Text  = _financialData.MonthlySalary  is null
-                ? "₱ —"
-                : $"₱ {_financialData.MonthlySalary.Value:N2}";
-
-            PayrollSummaryAmount.Text = _financialData.PayrollSummary is null
-                ? "₱ —"
-                : $"₱ {_financialData.PayrollSummary.Value:N2}";
+            PositionLabel.Text            = string.IsNullOrWhiteSpace(emp.Position) ? "—" : emp.Position;
+            MonthlySalaryAmount.Text      = $"₱ {emp.Salary:N2}";
+            PayrollSummaryAmount.Text     = $"₱ {emp.Payroll:N2}";
         }
 
         // ── Donut chart drawing ───────────────────────────────────────
