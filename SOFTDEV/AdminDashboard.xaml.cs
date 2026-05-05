@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace SOFTDEV
 {
@@ -9,10 +10,14 @@ namespace SOFTDEV
     /// </summary>
     public partial class AdminDashboard : Window
     {
+        // ── Private fields ────────────────────────────────────────────
+        private string _username;
+
         // ── Private calendar state fields ─────────────────────────────
         private int _calendarYear  = DateTime.Today.Year;
         private int _calendarMonth = DateTime.Today.Month;
         private int _highlightDay  = DateTime.Today.Day;
+        private int _selectedDay   = 0;   // 0 = no user selection yet
         private List<CalendarDayItem> _calendarDays = new();
 
         // ── Public properties ─────────────────────────────────────────
@@ -25,44 +30,56 @@ namespace SOFTDEV
         // ── Constructor ───────────────────────────────────────────────
         public AdminDashboard(string username)
         {
+            _username = username;
+
             InitializeComponent();
 
-            GreetingText.Text = $"Hello, {username}!";
+            GreetingText.Text        = $"Hello, {username}!";
+            AttendanceDateLabel.Text = DateTime.Today.ToString("MMMM dd, yyyy");
 
             LoadEmployees();
+            LoadEmployeeCount();
 
             RefreshCalendar();
         }
 
         // ── Employee list ─────────────────────────────────────────────
 
-        /// <summary>Fetches all employees from the database and binds them to the list.</summary>
+        /// <summary>Fetches all employees from the database and binds them to the list.
+        /// Falls back to placeholder entries when the database is unavailable.</summary>
         private void LoadEmployees()
         {
             Employees = DatabaseHelper.GetAllEmployees();
-            EmployeeListControl.ItemsSource = null;   // force refresh
+
+            if (Employees.Count == 0)
+            {
+                Employees = new List<EmployeeEntry>
+                {
+                    new EmployeeEntry("Alice Santos",   "Software Engineer"),
+                    new EmployeeEntry("Bob Reyes",      "Project Manager"),
+                    new EmployeeEntry("Carol Lim",      "QA Analyst"),
+                    new EmployeeEntry("David Cruz",     "UI/UX Designer"),
+                    new EmployeeEntry("Eva Mendoza",    "DevOps Engineer"),
+                };
+            }
+
+            EmployeeListControl.ItemsSource = null;
             EmployeeListControl.ItemsSource = Employees;
+        }
+
+        /// <summary>Queries the employee count from the DB and updates the stat card.</summary>
+        private void LoadEmployeeCount()
+        {
+            int count = DatabaseHelper.GetEmployeeCount();
+            EmployeeCountLabel.Text = count >= 0 ? count.ToString() : "—";
         }
 
         // ── Calendar generation ───────────────────────────────────────
 
         /// <summary>
         /// Generates the list of <see cref="CalendarDayItem"/> objects for the given month.
-        /// Leading padding cells (Day == 0) are added so that day 1 falls on the correct
-        /// column of a Sunday-first 7-column grid.
         /// </summary>
-        /// <param name="year">The calendar year (must be ≥ 1).</param>
-        /// <param name="month">The calendar month (1–12).</param>
-        /// <param name="highlightDay">
-        /// The day to highlight (1–DaysInMonth). Values outside this range are clamped;
-        /// 0 means no cell is highlighted.
-        /// </param>
-        /// <returns>A list of <see cref="CalendarDayItem"/> objects representing the calendar grid.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when <paramref name="year"/> is less than 1, or <paramref name="month"/> is
-        /// outside the range 1–12.
-        /// </exception>
-        internal List<CalendarDayItem> GenerateCalendarDays(int year, int month, int highlightDay)
+        internal List<CalendarDayItem> GenerateCalendarDays(int year, int month, int highlightDay, int selectedDay = 0)
         {
             if (year < 1)
                 throw new ArgumentOutOfRangeException(nameof(year), year, "Year must be greater than or equal to 1.");
@@ -70,34 +87,27 @@ namespace SOFTDEV
                 throw new ArgumentOutOfRangeException(nameof(month), month, "Month must be between 1 and 12.");
 
             int daysInMonth = DateTime.DaysInMonth(year, month);
-
-            // Clamp highlightDay to [0, daysInMonth]; 0 means no highlight.
             highlightDay = Math.Max(0, Math.Min(highlightDay, daysInMonth));
 
             var days = new List<CalendarDayItem>();
 
-            // Leading padding cells so that day 1 lands on the correct weekday column.
-            int startOffset = (int)new DateTime(year, month, 1).DayOfWeek; // 0 = Sunday
+            int startOffset = (int)new DateTime(year, month, 1).DayOfWeek;
             for (int i = 0; i < startOffset; i++)
-                days.Add(new CalendarDayItem(0, false, false));
+                days.Add(new CalendarDayItem(0, false, false, false));
 
-            // Current-month day cells.
             for (int d = 1; d <= daysInMonth; d++)
-                days.Add(new CalendarDayItem(d, true, d == highlightDay));
+                days.Add(new CalendarDayItem(d, true, d == highlightDay, d == selectedDay));
 
             return days;
         }
 
-        /// <summary>
-        /// Regenerates the calendar day list for the current <see cref="_calendarYear"/> /
-        /// <see cref="_calendarMonth"/> and pushes it to the UI.
-        /// </summary>
+        /// <summary>Regenerates the calendar and pushes it to the UI.</summary>
         private void RefreshCalendar()
         {
-            CalendarDays = GenerateCalendarDays(_calendarYear, _calendarMonth, _highlightDay);
+            CalendarDays = GenerateCalendarDays(_calendarYear, _calendarMonth, _highlightDay, _selectedDay);
             _calendarDays = CalendarDays;
             CalendarDaysControl.ItemsSource = CalendarDays;
-            CalendarMonthLabel.Text = $"{new DateTime(_calendarYear, _calendarMonth, 1):MMMM yyyy}";
+            CalendarMonthLabel.Content = $"{new DateTime(_calendarYear, _calendarMonth, 1):MMMM yyyy}";
         }
 
         // ── Control Group handlers ────────────────────────────────────
@@ -124,18 +134,29 @@ namespace SOFTDEV
         // ── Navigation Bar handler ────────────────────────────────────
         private void NavButton_Click(object sender, RoutedEventArgs e)
         {
+            if (sender == OverviewButton)
+            {
+                var overviewUI = new AdminOverviewUI(_username, this);
+                this.Hide();
+                overviewUI.Show();
+            }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }
 
         // ── Left Column handlers ──────────────────────────────────────
         private void StatCardRefresh_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(nameof(StatCardRefresh_Click));
+            LoadEmployeeCount();
         }
 
         private void ClockInOut_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(nameof(ClockInOut_Click));
+            var dialog = new ClockInTimePickerDialog { Owner = this };
+            if (dialog.ShowDialog() == true)
+            {
+                ClockInTimeLabel.Text   = dialog.SelectedTime;
+                ClockInStatusLabel.Text = "Clocked In";
+            }
         }
 
         private void LunchBreak_Click(object sender, RoutedEventArgs e)
@@ -143,34 +164,46 @@ namespace SOFTDEV
             System.Diagnostics.Debug.WriteLine(nameof(LunchBreak_Click));
         }
 
-        // ── Center Column (Calendar) handlers ────────────────────────
+        // ── Calendar — month label click (year picker) ────────────────
+        private void CalendarMonthLabel_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new CalendarYearPickerDialog(_calendarYear) { Owner = this };
+            if (dialog.ShowDialog() == true)
+            {
+                _calendarYear = dialog.SelectedYear;
+                _selectedDay  = 0;   // clear day selection when year changes
+                RefreshCalendar();
+            }
+        }
+
+        // ── Calendar — day cell click ─────────────────────────────────
+        private void CalendarDay_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int day && day > 0)
+            {
+                _selectedDay = day;
+                RefreshCalendar();
+
+                // Update the attendance date label to reflect the chosen date
+                var chosen = new DateTime(_calendarYear, _calendarMonth, day);
+                AttendanceDateLabel.Text = chosen.ToString("MMMM dd, yyyy");
+            }
+        }
+
+        // ── Center Column (Calendar) nav handlers ────────────────────
         private void PrevMonth_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(nameof(PrevMonth_Click));
-            if (_calendarMonth == 1)
-            {
-                _calendarMonth = 12;
-                _calendarYear--;
-            }
-            else
-            {
-                _calendarMonth--;
-            }
+            if (_calendarMonth == 1) { _calendarMonth = 12; _calendarYear--; }
+            else                     { _calendarMonth--; }
+            _selectedDay = 0;
             RefreshCalendar();
         }
 
         private void NextMonth_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(nameof(NextMonth_Click));
-            if (_calendarMonth == 12)
-            {
-                _calendarMonth = 1;
-                _calendarYear++;
-            }
-            else
-            {
-                _calendarMonth++;
-            }
+            if (_calendarMonth == 12) { _calendarMonth = 1; _calendarYear++; }
+            else                      { _calendarMonth++; }
+            _selectedDay = 0;
             RefreshCalendar();
         }
 

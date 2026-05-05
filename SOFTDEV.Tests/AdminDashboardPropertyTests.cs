@@ -48,7 +48,7 @@ namespace SOFTDEV.Tests
             {
                 WpfAppBootstrap.EnsureInitialized();
 
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 var purpleAccentColor = (Color)ColorConverter.ConvertFromString("#7b61ff");
                 var circleButtonStyle = Application.Current.Resources["CircleButtonStyle"] as Style;
@@ -113,7 +113,7 @@ namespace SOFTDEV.Tests
             StaHelper.RunOnSta(() =>
             {
                 WpfAppBootstrap.EnsureInitialized();
-                var dashboard = new AdminDashboard();
+                var dashboard = new AdminDashboard("TestUser");
 
                 try
                 {

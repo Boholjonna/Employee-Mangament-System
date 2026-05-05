@@ -9,6 +9,7 @@
         MinWidth="1200"
         MinHeight="700"
         WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
         ResizeMode="CanResize"
         Background="{StaticResource DarkBackgroundBrush}">
 
@@ -164,6 +165,12 @@
                                        Foreground="{StaticResource PurpleAccentBrush}"
                                        FontSize="13"
                                        FontWeight="Bold" />
+                            <TextBlock x:Name="EmployeeCountLabel"
+                                       Text="—"
+                                       Foreground="White"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Margin="0,6,0,0" />
                             <Button Style="{StaticResource CircleButtonStyle}"
                                     Content="↻"
                                     HorizontalAlignment="Right"
@@ -247,15 +254,18 @@
                                        FontWeight="Bold"
                                        FontSize="16"
                                        Margin="0,0,0,12" />
-                            <TextBlock Text="May 23, 2025"
+                            <TextBlock x:Name="AttendanceDateLabel"
                                        Foreground="White"
                                        FontSize="14"
                                        Margin="0,0,0,4" />
-                            <TextBlock Text="09:00 AM"
+                            <!-- Shows the selected clock-in time; updates after picker confirms -->
+                            <TextBlock x:Name="ClockInTimeLabel"
+                                       Text="--:-- --"
                                        Foreground="White"
                                        FontSize="14"
                                        Margin="0,0,0,8" />
-                            <TextBlock Text="Clock In"
+                            <TextBlock x:Name="ClockInStatusLabel"
+                                       Text="Not clocked in"
                                        Foreground="{StaticResource PurpleAccentBrush}"
                                        FontSize="13"
                                        Margin="0,0,0,12" />
@@ -345,7 +355,7 @@
                             <RowDefinition Height="*"    />  <!-- Day cells -->
                         </Grid.RowDefinitions>
 
-                        <!-- Calendar Header: month label + prev/next buttons -->
+                        <!-- Calendar Header: month label (clickable for year picker) + prev/next buttons -->
                         <Grid Grid.Row="0" Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -353,13 +363,18 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock x:Name="CalendarMonthLabel"
-                                       Grid.Column="0"
-                                       Foreground="{StaticResource PurpleAccentBrush}"
-                                       FontWeight="Bold"
-                                       FontSize="18"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Center" />
+                            <!-- Clicking the month/year label opens the year picker -->
+                            <Button x:Name="CalendarMonthLabel"
+                                    Grid.Column="0"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Foreground="{StaticResource PurpleAccentBrush}"
+                                    Background="Transparent"
+                                    FontWeight="Bold"
+                                    FontSize="18"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Padding="0"
+                                    Click="CalendarMonthLabel_Click" />
 
                             <Button x:Name="PrevMonthButton"
                                     Grid.Column="1"
@@ -399,26 +414,57 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="3"
+                                    <!-- Each day cell is a button so it is clickable -->
+                                    <Button Margin="2"
+                                            Padding="0"
                                             Background="Transparent"
-                                            CornerRadius="0">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Tag="{Binding Day}"
+                                            Click="CalendarDay_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
                                                 <Setter Property="Background" Value="Transparent" />
-                                                <Setter Property="CornerRadius" Value="0" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="DayBorder"
+                                                                    Background="{TemplateBinding Background}"
+                                                                    CornerRadius="20"
+                                                                    Padding="2">
+                                                                <ContentPresenter HorizontalAlignment="Center"
+                                                                                  VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="DayBorder"
+                                                                            Property="Background"
+                                                                            Value="#44ffffff" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
                                                 <Style.Triggers>
+                                                    <!-- Today highlight -->
                                                     <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
                                                         <Setter Property="Background" Value="{StaticResource PurpleAccentBrush}" />
-                                                        <Setter Property="CornerRadius" Value="20" />
+                                                    </DataTrigger>
+                                                    <!-- User-selected day -->
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="Background" Value="#9b7fe8" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </Border.Style>
+                                        </Button.Style>
                                         <TextBlock Text="{Binding Day}"
                                                    Foreground="White"
                                                    FontSize="15"
                                                    HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center">
+                                                   VerticalAlignment="Center"
+                                                   MinWidth="28"
+                                                   MinHeight="28"
+                                                   TextAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
@@ -429,7 +475,7 @@
                                                 </Style>
                                             </TextBlock.Style>
                                         </TextBlock>
-                                    </Border>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
