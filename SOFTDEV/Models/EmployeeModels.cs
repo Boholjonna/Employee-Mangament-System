@@ -19,6 +19,22 @@ namespace SOFTDEV
     }
 
     /// <summary>
+    /// Carries all displayable fields for a single employee,
+    /// used to populate the Employee Detail Panel in AdminEmployeesView.
+    /// </summary>
+    public class EmployeeDetail
+    {
+        public string  Name             { get; set; } = string.Empty;
+        public string  Position         { get; set; } = string.Empty;
+        public decimal Salary           { get; set; } = 0m;
+        public decimal Payroll          { get; set; } = 0m;
+        public string  DateHired        { get; set; } = string.Empty;
+        public string  ContactNo        { get; set; } = string.Empty;
+        public string  Address          { get; set; } = string.Empty;
+        public string  EmergencyContact { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// Represents a task item in the employee's task list.
     /// </summary>
     public class TaskItem

@@ -133,7 +133,7 @@ Implement the `AdminOverviewUI` WPF Window in C# for the SOFTDEV application. Th
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Add property-based tests (FsCheck)
-  - [ ]* 5.1 Write property test — Property 1: Username display round-trip
+  - [x] 5.1 Write property test — Property 1: Username display round-trip
     - For any non-null `string username`, construct `AdminOverviewUI(username)` and assert `UsernameLabel.Text == username`.
     - Tag: `// Feature: admin-overview-ui, Property 1: Username display round-trip`
     - Run on STA thread; minimum 100 FsCheck iterations.

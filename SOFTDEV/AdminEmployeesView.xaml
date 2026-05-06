@@ -292,104 +292,279 @@
                         Background="#1e1e2d"
                         Padding="24">
 
-                    <!-- Inner grid: Row 0 = card header, Row 1 = employee list -->
+                    <!-- Two-column grid: Col 0 = employee list (300px), Col 1 = detail panel (*) -->
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />  <!-- Row 0: Card header -->
-                            <RowDefinition Height="*"    />  <!-- Row 1: Employee list -->
-                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300" />  <!-- Col 0: Employee list -->
+                            <ColumnDefinition Width="*"   />  <!-- Col 1: Detail panel  -->
+                        </Grid.ColumnDefinitions>
 
-                        <!-- ─────────────────────────────────────────────────
-                             Row 0 — Card Header: title left, buttons right
-                             ───────────────────────────────────────────────── -->
-                        <Grid Grid.Row="0" Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"    />  <!-- Col 0: Title -->
-                                <ColumnDefinition Width="Auto" />  <!-- Col 1: Action buttons -->
-                            </Grid.ColumnDefinitions>
+                        <!-- ═══════════════════════════════════════════════
+                             Column 0 — Employee List Panel
+                             ═══════════════════════════════════════════════ -->
+                        <Grid Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />  <!-- Row 0: Card header -->
+                                <RowDefinition Height="*"    />  <!-- Row 1: Employee list -->
+                            </Grid.RowDefinitions>
 
-                            <!-- Section title -->
-                            <TextBlock Grid.Column="0"
-                                       Text="My Employees"
-                                       Foreground="White"
-                                       FontWeight="Bold"
-                                       FontSize="20"
-                                       VerticalAlignment="Center" />
+                            <!-- ─────────────────────────────────────────────────
+                                 Row 0 — Card Header: title left, buttons right
+                                 ───────────────────────────────────────────────── -->
+                            <Grid Grid.Row="0" Margin="0,0,0,16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"    />  <!-- Col 0: Title -->
+                                    <ColumnDefinition Width="Auto" />  <!-- Col 1: Action buttons -->
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Filter + Sort buttons -->
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center">
+                                <!-- Section title -->
+                                <TextBlock Grid.Column="0"
+                                           Text="My Employees"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="20"
+                                           VerticalAlignment="Center" />
 
-                                <Button x:Name="FilterButton"
-                                        Style="{StaticResource PillButtonStyle}"
-                                        Content="FILTER ↓"
-                                        MinWidth="100"
-                                        Padding="16,8"
-                                        Margin="0,0,8,0"
-                                        Click="FilterButton_Click" />
+                                <!-- Filter + Sort buttons -->
+                                <StackPanel Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center">
 
-                                <Button x:Name="SortButton"
-                                        Style="{StaticResource PillButtonStyle}"
-                                        Content="SORT ↓"
-                                        MinWidth="90"
-                                        Padding="16,8"
-                                        Click="SortButton_Click" />
+                                    <Button x:Name="FilterButton"
+                                            Style="{StaticResource PillButtonStyle}"
+                                            Content="FILTER ↓"
+                                            MinWidth="100"
+                                            Padding="16,8"
+                                            Margin="0,0,8,0"
+                                            Click="FilterButton_Click" />
 
-                            </StackPanel>
+                                    <Button x:Name="SortButton"
+                                            Style="{StaticResource PillButtonStyle}"
+                                            Content="SORT ↓"
+                                            MinWidth="90"
+                                            Padding="16,8"
+                                            Click="SortButton_Click" />
+
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- ─────────────────────────────────────────────────
+                                 Row 1 — Scrollable Employee List
+                                 ───────────────────────────────────────────────── -->
+                            <ScrollViewer Grid.Row="1"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <ScrollViewer.Resources>
+                                    <Style TargetType="ScrollBar"
+                                           BasedOn="{StaticResource CustomScrollbarStyle}" />
+                                </ScrollViewer.Resources>
+
+                                <ItemsControl x:Name="EmployeeListControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- Clickable Button wrapper — transparent chrome -->
+                                            <Button Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Padding="0"
+                                                    HorizontalContentAlignment="Stretch"
+                                                    Tag="{Binding Name}"
+                                                    Click="EmployeeRow_Click">
+                                                <!-- Employee row -->
+                                                <StackPanel Orientation="Horizontal"
+                                                            Margin="0,8,0,8">
+
+                                                    <!-- Circular avatar -->
+                                                    <Border Width="44"
+                                                            Height="44"
+                                                            CornerRadius="22"
+                                                            Background="{StaticResource PurpleAccentBrush}"
+                                                            Margin="0,0,0,0">
+                                                        <TextBlock Text="👤"
+                                                                   HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
+                                                    </Border>
+
+                                                    <!-- Name and position -->
+                                                    <StackPanel Orientation="Vertical"
+                                                                VerticalAlignment="Center"
+                                                                Margin="14,0,0,0">
+
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   Foreground="White"
+                                                                   FontWeight="Bold"
+                                                                   FontSize="15" />
+
+                                                        <TextBlock Text="{Binding Position}"
+                                                                   Foreground="#aaaaaa"
+                                                                   FontSize="12" />
+
+                                                    </StackPanel>
+
+                                                </StackPanel>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </ScrollViewer>
+
                         </Grid>
 
-                        <!-- ─────────────────────────────────────────────────
-                             Row 1 — Scrollable Employee List
-                             ───────────────────────────────────────────────── -->
-                        <ScrollViewer Grid.Row="1"
-                                      VerticalScrollBarVisibility="Auto"
-                                      HorizontalScrollBarVisibility="Disabled">
-                            <ScrollViewer.Resources>
-                                <Style TargetType="ScrollBar"
-                                       BasedOn="{StaticResource CustomScrollbarStyle}" />
-                            </ScrollViewer.Resources>
+                        <!-- ═══════════════════════════════════════════════
+                             Column 1 — Detail Panel (initially Collapsed)
+                             ═══════════════════════════════════════════════ -->
+                        <Border x:Name="DetailPanel"
+                                Grid.Column="1"
+                                Visibility="Collapsed"
+                                Background="#1e1e2d"
+                                CornerRadius="25"
+                                Margin="16,0,0,0">
 
-                            <ItemsControl x:Name="EmployeeListControl">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <!-- Employee row -->
-                                        <StackPanel Orientation="Horizontal"
-                                                    Margin="0,8,0,8">
+                            <Border Padding="24">
+                            <StackPanel Orientation="Vertical">
 
-                                            <!-- Circular avatar -->
-                                            <Border Width="44"
-                                                    Height="44"
-                                                    CornerRadius="22"
-                                                    Background="{StaticResource PurpleAccentBrush}"
-                                                    Margin="0,0,0,0">
-                                                <TextBlock Text="👤"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center" />
-                                            </Border>
+                                <!-- Section title -->
+                                <TextBlock Text="Employee Details"
+                                           Foreground="White"
+                                           FontWeight="Bold"
+                                           FontSize="18"
+                                           Margin="0,0,0,16" />
 
-                                            <!-- Name and position -->
-                                            <StackPanel Orientation="Vertical"
-                                                        VerticalAlignment="Center"
-                                                        Margin="14,0,0,0">
+                                <!-- Avatar + field grid -->
+                                <StackPanel Orientation="Horizontal">
 
-                                                <TextBlock Text="{Binding Name}"
-                                                           Foreground="White"
-                                                           FontWeight="Bold"
-                                                           FontSize="15" />
+                                    <!-- AvatarPlaceholder: 120×120 circle -->
+                                    <Border Width="120"
+                                            Height="120"
+                                            CornerRadius="60"
+                                            Background="{StaticResource PurpleAccentBrush}">
+                                        <TextBlock Text="👤"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="48" />
+                                    </Border>
 
-                                                <TextBlock Text="{Binding Position}"
-                                                           Foreground="#aaaaaa"
-                                                           FontSize="12" />
+                                    <!-- Label / value grid for all eight fields -->
+                                    <Grid Margin="24,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />  <!-- labels -->
+                                            <ColumnDefinition Width="*"    />  <!-- values -->
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />  <!-- Name -->
+                                            <RowDefinition Height="Auto" />  <!-- Position -->
+                                            <RowDefinition Height="Auto" />  <!-- Salary -->
+                                            <RowDefinition Height="Auto" />  <!-- Payroll -->
+                                            <RowDefinition Height="Auto" />  <!-- Date Hired -->
+                                            <RowDefinition Height="Auto" />  <!-- Contact No. -->
+                                            <RowDefinition Height="Auto" />  <!-- Address -->
+                                            <RowDefinition Height="Auto" />  <!-- Emergency Contact -->
+                                        </Grid.RowDefinitions>
 
-                                            </StackPanel>
+                                        <!-- Row 0: Name -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                                   Text="Name"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                                   Text="{Binding Name}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
 
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                        <!-- Row 1: Position -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                                   Text="Position"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                                   Text="{Binding Position}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
 
-                        </ScrollViewer>
+                                        <!-- Row 2: Salary -->
+                                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                                   Text="Salary"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                                   Text="{Binding Salary, StringFormat=₱{0:N2}}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
+
+                                        <!-- Row 3: Payroll -->
+                                        <TextBlock Grid.Row="3" Grid.Column="0"
+                                                   Text="Payroll"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="3" Grid.Column="1"
+                                                   Text="{Binding Payroll, StringFormat=₱{0:N2}}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
+
+                                        <!-- Row 4: Date Hired -->
+                                        <TextBlock Grid.Row="4" Grid.Column="0"
+                                                   Text="Date Hired"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="4" Grid.Column="1"
+                                                   Text="{Binding DateHired}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
+
+                                        <!-- Row 5: Contact No. -->
+                                        <TextBlock Grid.Row="5" Grid.Column="0"
+                                                   Text="Contact No."
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="5" Grid.Column="1"
+                                                   Text="{Binding ContactNo}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
+
+                                        <!-- Row 6: Address -->
+                                        <TextBlock Grid.Row="6" Grid.Column="0"
+                                                   Text="Address"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,8" />
+                                        <TextBlock Grid.Row="6" Grid.Column="1"
+                                                   Text="{Binding Address}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,8" />
+
+                                        <!-- Row 7: Emergency Contact -->
+                                        <TextBlock Grid.Row="7" Grid.Column="0"
+                                                   Text="Emergency Contact"
+                                                   Foreground="#aaaaaa"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,0" />
+                                        <TextBlock Grid.Row="7" Grid.Column="1"
+                                                   Text="{Binding EmergencyContact}"
+                                                   Foreground="White"
+                                                   FontSize="14"
+                                                   Margin="12,0,0,0" />
+
+                                    </Grid>
+
+                                </StackPanel>
+
+                            </StackPanel>
+                            </Border>
+
+                        </Border>
 
                     </Grid>
                 </Border>
