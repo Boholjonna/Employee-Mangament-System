@@ -26,6 +26,9 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using FsCheck;
+using FsCheck.Fluent;
+using FsCheck.Xunit;
 using Xunit;
 
 namespace SOFTDEV.Tests
@@ -653,6 +656,56 @@ namespace SOFTDEV.Tests
 
                 window.Close();
             });
+        }
+
+        // -----------------------------------------------------------------------
+        // Property 1 — Username display round-trip
+        // Feature: admin-overview-ui, Property 1: Username display round-trip
+        //
+        // For any non-null username string passed to the AdminOverviewUI constructor,
+        // UsernameLabel.Text must display exactly that string.
+        //
+        // Validates: Requirements 2.6
+        // -----------------------------------------------------------------------
+
+        /// <summary>
+        /// For any non-null username string, constructing AdminOverviewUI(username)
+        /// and reading UsernameLabel.Text must return the original username unchanged.
+        ///
+        /// Uses Prop.ForAll with Arb.From&lt;NonNull&lt;string&gt;&gt;() to generate non-null
+        /// strings. All iterations run within a single STA thread invocation via
+        /// StaHelper.RunOnSta to avoid WPF BAML stream race conditions.
+        ///
+        /// Minimum 100 FsCheck iterations.
+        ///
+        /// **Validates: Requirements 2.6**
+        /// </summary>
+        [Property(MaxTest = 100,
+                  DisplayName = "Property 1: Username display round-trip")]
+        public Property Property1_UsernameDisplayRoundTrip()
+        {
+            // Feature: admin-overview-ui, Property 1: Username display round-trip
+            return Prop.ForAll(
+                ArbMap.Default.ArbFor<NonNull<string>>(),
+                usernameWrapper =>
+                {
+                    string username = usernameWrapper.Get;
+
+                    bool result = false;
+                    StaHelper.RunOnSta(() =>
+                    {
+                        WpfAppBootstrap.EnsureInitialized();
+
+                        var window = new AdminOverviewUI(username);
+                        var label  = (TextBlock)window.FindName("UsernameLabel");
+
+                        result = label is not null && label.Text == username;
+
+                        window.Close();
+                    });
+
+                    return result.Label($"UsernameLabel.Text did not match username '{username}'");
+                });
         }
     }
 }

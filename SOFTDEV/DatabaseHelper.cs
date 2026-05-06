@@ -215,8 +215,8 @@ namespace SOFTDEV
                         Id       = reader.IsDBNull(0) ? 0      : reader.GetInt32(0),
                         Name     = reader.IsDBNull(1) ? ""     : reader.GetString(1),
                         Position = reader.IsDBNull(2) ? ""     : reader.GetString(2),
-                        Salary   = reader.IsDBNull(3) ? 0m     : reader.GetDecimal(3),
-                        Payroll  = reader.IsDBNull(4) ? 0m     : reader.GetDecimal(4),
+                        Salary   = reader.IsDBNull(3) ? 0m     : Convert.ToDecimal(reader.GetValue(3)),
+                        Payroll  = reader.IsDBNull(4) ? 0m     : Convert.ToDecimal(reader.GetValue(4)),
                     });
                 }
             }
@@ -254,6 +254,57 @@ namespace SOFTDEV
             {
                 System.Diagnostics.Debug.WriteLine($"[DB] AuthenticateEmployee error: {ex.Message}");
                 return false;
+            }
+        }
+
+        // ── Get employee details ──────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns all profile fields for the employee with the given name,
+        /// or null if no match is found or a database error occurs.
+        /// </summary>
+        /// <param name="name">The employee's name to look up.</param>
+        /// <returns>
+        /// An <see cref="EmployeeDetail"/> populated with all profile fields,
+        /// or <see langword="null"/> if no matching row exists or a database error occurs.
+        /// </returns>
+        public static EmployeeDetail? GetEmployeeDetails(string name)
+        {
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT name, position, salary, payroll, datehired, " +
+                    "contactno, address, emergencycontact " +
+                    "FROM employee " +
+                    "WHERE name = @name " +
+                    "LIMIT 1";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@name", name);
+
+                using var reader = cmd.ExecuteReader();
+
+                if (!reader.Read())
+                    return null;
+
+                return new EmployeeDetail
+                {
+                    Name             = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
+                    Position         = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                    Salary           = reader.IsDBNull(2) ? 0m           : Convert.ToDecimal(reader.GetValue(2)),
+                    Payroll          = reader.IsDBNull(3) ? 0m           : Convert.ToDecimal(reader.GetValue(3)),
+                    DateHired        = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                    ContactNo        = reader.IsDBNull(5) ? string.Empty : Convert.ToString(reader.GetValue(5)) ?? string.Empty,
+                    Address          = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                    EmergencyContact = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
+                };
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetEmployeeDetails error: {ex.Message}");
+                return null;
             }
         }
 
