@@ -146,6 +146,12 @@ namespace SOFTDEV
                 this.Hide();
                 employeesView.Show();
             }
+            else if (sender == AttendanceButton)
+            {
+                var attendanceDashboard = new AttendanceDashboard(_username);
+                this.Hide();
+                attendanceDashboard.Show();
+            }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }
 

@@ -13,14 +13,14 @@ namespace SOFTDEV
     /// </summary>
     public partial class EmployeeDashboard : Window
     {
-        public string LoggedInUsername { get; private set; }
+        public string LoggedInEmployeeName { get; private set; }
 
         // ── Constructor ───────────────────────────────────────────────
-        public EmployeeDashboard(string username)
+        public EmployeeDashboard(string employeeName)
         {
             InitializeComponent();
 
-            LoggedInUsername = username;
+            LoggedInEmployeeName = employeeName;
 
             // Show Dashboard view by default
             NavigateToSection("Dashboard");
@@ -46,7 +46,7 @@ namespace SOFTDEV
                     break;
 
                 case "Attendance":
-                    MainContentControl.Content = new AttendanceView();
+                    MainContentControl.Content = new AttendanceView(LoggedInEmployeeName);
                     HighlightButton(AttendanceButton);
                     break;
 

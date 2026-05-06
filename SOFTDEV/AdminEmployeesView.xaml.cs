@@ -102,6 +102,12 @@ namespace SOFTDEV
                 this.Hide();
                 overviewUI.Show();
             }
+            else if (sender == AttendanceButton)
+            {
+                var attendanceDashboard = new AttendanceDashboard(_username);
+                this.Hide();
+                attendanceDashboard.Show();
+            }
             Debug.WriteLine(nameof(NavButton_Click));
         }
 

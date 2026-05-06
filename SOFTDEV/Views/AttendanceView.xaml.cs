@@ -11,14 +11,19 @@ namespace SOFTDEV.Views
     public partial class AttendanceView : UserControl
     {
         private DispatcherTimer _timer;
-        private bool _isClockedIn = true;
+        private bool _isClockedIn = false;
+        private string _employeeName = string.Empty;
+        private string _clockInTime  = string.Empty;
         private List<AttendanceRecord> _attendanceHistory = new();
 
-        public AttendanceView()
+        public AttendanceView() : this(string.Empty) { }
+
+        public AttendanceView(string employeeName)
         {
             InitializeComponent();
+            _employeeName = employeeName;
             InitializeTimer();
-            InitializeSampleData();
+            LoadAttendanceHistory();
             DrawAttendanceChart();
         }
 
@@ -36,20 +41,41 @@ namespace SOFTDEV.Views
             CurrentDateText.Text = DateTime.Now.ToString("dddd, MMMM d, yyyy");
         }
 
-        private void InitializeSampleData()
+        private void LoadAttendanceHistory()
         {
-            _attendanceHistory = new List<AttendanceRecord>
-            {
-                new AttendanceRecord { Date = "May 4, 2026", ClockIn = "08:30 AM", ClockOut = "In Progress", Hours = "-", Status = "Present", StatusColor = "#4caf50" },
-                new AttendanceRecord { Date = "May 3, 2026", ClockIn = "08:45 AM", ClockOut = "05:15 PM", Hours = "8.5", Status = "Present", StatusColor = "#4caf50" },
-                new AttendanceRecord { Date = "May 2, 2026", ClockIn = "09:15 AM", ClockOut = "05:30 PM", Hours = "8.25", Status = "Late", StatusColor = "#ff9800" },
-                new AttendanceRecord { Date = "May 1, 2026", ClockIn = "08:30 AM", ClockOut = "05:00 PM", Hours = "8.5", Status = "Present", StatusColor = "#4caf50" },
-                new AttendanceRecord { Date = "Apr 30, 2026", ClockIn = "-", ClockOut = "-", Hours = "-", Status = "Absent", StatusColor = "#f44336" },
-                new AttendanceRecord { Date = "Apr 29, 2026", ClockIn = "08:25 AM", ClockOut = "05:10 PM", Hours = "8.75", Status = "Present", StatusColor = "#4caf50" },
-                new AttendanceRecord { Date = "Apr 28, 2026", ClockIn = "08:35 AM", ClockOut = "05:05 PM", Hours = "8.5", Status = "Present", StatusColor = "#4caf50" },
-                new AttendanceRecord { Date = "Apr 27, 2026", ClockIn = "09:05 AM", ClockOut = "05:20 PM", Hours = "8.25", Status = "Late", StatusColor = "#ff9800" }
-            };
+            _attendanceHistory.Clear();
 
+            if (!string.IsNullOrEmpty(_employeeName))
+            {
+                try
+                {
+                    var records = DatabaseHelper.GetAttendanceByEmployee(_employeeName);
+                    foreach (var r in records)
+                    {
+                        _attendanceHistory.Add(new AttendanceRecord
+                        {
+                            Date      = r.Date,
+                            ClockIn   = r.TimeIn,
+                            ClockOut  = string.IsNullOrEmpty(r.TimeOut) ? "In Progress" : r.TimeOut,
+                            Hours     = string.IsNullOrEmpty(r.TotalHours) ? "-" : r.TotalHours,
+                            Status    = r.Status,
+                            StatusColor = r.StatusColor,
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AttendanceView] LoadAttendanceHistory error: {ex.Message}");
+                }
+            }
+
+            // Fall back to sample data if nothing loaded
+            if (_attendanceHistory.Count == 0)
+            {
+                _attendanceHistory.Add(new AttendanceRecord { Date = "No records yet", ClockIn = "-", ClockOut = "-", Hours = "-", Status = "-", StatusColor = "#aaaaaa" });
+            }
+
+            AttendanceHistoryControl.ItemsSource = null;
             AttendanceHistoryControl.ItemsSource = _attendanceHistory;
         }
 
@@ -101,22 +127,64 @@ namespace SOFTDEV.Views
 
         private void ClockInOut_Click(object sender, RoutedEventArgs e)
         {
-            _isClockedIn = !_isClockedIn;
+            DateTime now        = DateTime.Now;
+            string   dbTime     = now.ToString("HH:mm:ss");   // 24-hour for MySQL TIME column
+            string   displayTime = now.ToString("hh:mm tt");  // 12-hour for UI display
 
-            if (_isClockedIn)
+            if (!_isClockedIn)
             {
+                // ── Clock IN ──────────────────────────────────────────
+                _clockInTime = dbTime;
+                _isClockedIn = true;
+
                 ClockInOutButton.Content = "🕐 Clock Out";
                 ClockStatusText.Text = "Clocked In";
                 ClockStatusText.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                ClockInTimeText.Text = DateTime.Now.ToString("hh:mm tt");
-                MessageBox.Show($"Clocked in at {DateTime.Now:hh:mm tt}", "Clock In", MessageBoxButton.OK, MessageBoxImage.Information);
+                ClockInTimeText.Text = displayTime;
+
+                if (!string.IsNullOrEmpty(_employeeName))
+                {
+                    try
+                    {
+                        bool ok = DatabaseHelper.RecordAttendance(_employeeName, dbTime, isClockingIn: true);
+                        if (!ok)
+                            MessageBox.Show("Could not save clock-in to database.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Clock-in DB error:\n{ex.Message}", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+
+                MessageBox.Show($"Clocked in at {displayTime}", "Clock In", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
+                // ── Clock OUT ─────────────────────────────────────────
+                _isClockedIn = false;
+
                 ClockInOutButton.Content = "🕐 Clock In";
                 ClockStatusText.Text = "Clocked Out";
                 ClockStatusText.Foreground = new SolidColorBrush(Color.FromRgb(170, 170, 170));
-                MessageBox.Show($"Clocked out at {DateTime.Now:hh:mm tt}", "Clock Out", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                if (!string.IsNullOrEmpty(_employeeName))
+                {
+                    try
+                    {
+                        bool ok = DatabaseHelper.RecordAttendance(_employeeName, dbTime, isClockingIn: false);
+                        if (!ok)
+                            MessageBox.Show("Could not save clock-out to database.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Clock-out DB error:\n{ex.Message}", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+
+                MessageBox.Show($"Clocked out at {displayTime}", "Clock Out", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Refresh the history list to show the completed record
+                LoadAttendanceHistory();
             }
         }
 
