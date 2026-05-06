@@ -53,7 +53,9 @@ namespace SOFTDEV
                     ErrorMessageText.Visibility = Visibility.Visible;
                     return;
                 }
-                OpenEmployeeDashboard(username);
+                // Use the employee's real name (matches the attendance table's employeename column)
+                string employeeName = DatabaseHelper.GetEmployeeName(username, password);
+                OpenEmployeeDashboard(employeeName);
             }
             else if (RoleManager.IsChecked == true)
             {
