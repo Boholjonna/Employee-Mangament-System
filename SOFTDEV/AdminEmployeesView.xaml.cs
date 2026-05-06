@@ -104,7 +104,7 @@ namespace SOFTDEV
             }
             else if (sender == AttendanceButton)
             {
-                var attendanceDashboard = new AttendanceDashboard(_username);
+                var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
                 this.Hide();
                 attendanceDashboard.Show();
             }

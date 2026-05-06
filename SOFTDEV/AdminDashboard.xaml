@@ -162,12 +162,14 @@
                              Columns="2"
                              Margin="0,0,0,16">
 
-                    <!-- StatCard0: Number of Employees -->
+                    <!-- StatCard0: Number of Employees (clickable → Employees view) -->
                     <Border x:Name="StatCard0"
                             Background="{StaticResource CardBackgroundBrush}"
                             CornerRadius="12"
                             Margin="4"
-                            Padding="20">
+                            Padding="20"
+                            Cursor="Hand"
+                            MouseLeftButtonUp="StatCard0_Click">
                         <StackPanel>
                             <TextBlock Text="Number of Employees"
                                        Foreground="{StaticResource PurpleAccentBrush}"
@@ -304,9 +306,15 @@
                                        FontWeight="Bold"
                                        FontSize="16"
                                        Margin="0,0,0,16" />
-                            <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
                                 <!-- Circle highlight -->
-                                <Border Width="64"
+                                <Border Grid.Column="0"
+                                        Width="64"
                                         Height="64"
                                         CornerRadius="32"
                                         Background="{StaticResource PurpleAccentBrush}">
@@ -317,16 +325,19 @@
                                                VerticalAlignment="Center" />
                                 </Border>
                                 <!-- Name and description -->
-                                <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                                <StackPanel Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center">
                                     <TextBlock Text="Employee Name"
                                                Foreground="{StaticResource PurpleAccentBrush}"
                                                FontWeight="Bold"
-                                               FontSize="14" />
+                                               FontSize="14"
+                                               TextWrapping="Wrap" />
                                     <TextBlock Text="Sick Leave"
                                                Foreground="#aaaaaa"
                                                FontSize="12" />
                                 </StackPanel>
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -361,6 +372,7 @@
                             <RowDefinition Height="Auto" />  <!-- Calendar header -->
                             <RowDefinition Height="Auto" />  <!-- Day-of-week labels -->
                             <RowDefinition Height="*"    />  <!-- Day cells -->
+                            <RowDefinition Height="Auto" />  <!-- Live time -->
                         </Grid.RowDefinitions>
 
                         <!-- Calendar Header: month label (clickable for year picker) + prev/next buttons -->
@@ -466,7 +478,6 @@
                                             </Style>
                                         </Button.Style>
                                         <TextBlock Text="{Binding Day}"
-                                                   Foreground="White"
                                                    FontSize="15"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
@@ -475,9 +486,15 @@
                                                    TextAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="White" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Day}" Value="0">
                                                             <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                        <!-- Today: dark text so it contrasts against the purple highlight -->
+                                                        <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                            <Setter Property="Foreground" Value="#1a1a2e" />
+                                                            <Setter Property="FontWeight" Value="ExtraBold" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -487,6 +504,15 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+
+                        <!-- Live clock — updates every second via DispatcherTimer -->
+                        <TextBlock Grid.Row="3"
+                                   x:Name="LiveClockLabel"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,14,0,0" />
 
                     </Grid>
                 </Border>
@@ -528,32 +554,56 @@
                         <ItemsControl x:Name="EmployeeListControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal"
-                                                Margin="0,6,0,6">
+                                    <Button Background="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Padding="0"
+                                            HorizontalContentAlignment="Stretch"
+                                            Click="EmployeeListItem_Click">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border x:Name="ItemBorder"
+                                                        Background="Transparent"
+                                                        CornerRadius="8"
+                                                        Padding="4,2">
+                                                    <ContentPresenter />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ItemBorder"
+                                                                Property="Background"
+                                                                Value="#22ffffff" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <StackPanel Orientation="Horizontal"
+                                                    Margin="0,6,0,6">
 
-                                        <!-- Circle avatar -->
-                                        <Border Width="36"
-                                                Height="36"
-                                                CornerRadius="18"
-                                                Background="{StaticResource PurpleAccentBrush}"
-                                                Margin="0,0,12,0">
-                                            <TextBlock Text="👤"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center" />
-                                        </Border>
+                                            <!-- Circle avatar -->
+                                            <Border Width="36"
+                                                    Height="36"
+                                                    CornerRadius="18"
+                                                    Background="{StaticResource PurpleAccentBrush}"
+                                                    Margin="0,0,12,0">
+                                                <TextBlock Text="👤"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                            </Border>
 
-                                        <!-- Name and position -->
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Name}"
-                                                       Foreground="{StaticResource PurpleAccentBrush}"
-                                                       FontWeight="Bold"
-                                                       FontSize="13" />
-                                            <TextBlock Text="{Binding Position}"
-                                                       Foreground="#aaaaaa"
-                                                       FontSize="11" />
+                                            <!-- Name and position -->
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="{StaticResource PurpleAccentBrush}"
+                                                           FontWeight="Bold"
+                                                           FontSize="13" />
+                                                <TextBlock Text="{Binding Position}"
+                                                           Foreground="#aaaaaa"
+                                                           FontSize="11" />
+                                            </StackPanel>
+
                                         </StackPanel>
-
-                                    </StackPanel>
+                                    </Button>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
