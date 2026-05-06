@@ -70,6 +70,22 @@ namespace SOFTDEV
             this.Close();
         }
 
+        // ── Tab navigation ────────────────────────────────────────────
+
+        private void MyEmployeesTabButton_Click(object sender, RoutedEventArgs e)
+        {
+            var employeesView = new AdminEmployeesView(_username, _ownerDashboard);
+            this.Hide();
+            employeesView.Show();
+        }
+
+        private void AttendanceTabButton_Click(object sender, RoutedEventArgs e)
+        {
+            var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
+            this.Hide();
+            attendanceDashboard.Show();
+        }
+
         // ── Data loading ──────────────────────────────────────────────
 
         private void LoadTaskData()

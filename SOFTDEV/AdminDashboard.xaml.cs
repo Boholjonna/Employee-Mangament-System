@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace SOFTDEV
 {
@@ -19,6 +21,9 @@ namespace SOFTDEV
         private int _highlightDay  = DateTime.Today.Day;
         private int _selectedDay   = 0;   // 0 = no user selection yet
         private List<CalendarDayItem> _calendarDays = new();
+
+        // ── Live clock timer ──────────────────────────────────────────
+        private DispatcherTimer _clockTimer;
 
         // ── Public properties ─────────────────────────────────────────
         /// <summary>Gets or sets the list of employees shown in the employee list panel.</summary>
@@ -41,6 +46,34 @@ namespace SOFTDEV
             LoadEmployeeCount();
 
             RefreshCalendar();
+            StartLiveClock();
+        }
+
+        // ── Live clock ────────────────────────────────────────────────
+
+        /// <summary>Starts a DispatcherTimer that updates the clock label every second.</summary>
+        private void StartLiveClock()
+        {
+            // Set initial value immediately so there is no blank flash
+            LiveClockLabel.Text = DateTime.Now.ToString("hh:mm:ss tt");
+
+            _clockTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _clockTimer.Tick += (_, _) =>
+            {
+                LiveClockLabel.Text = DateTime.Now.ToString("hh:mm:ss tt");
+
+                // Also keep the today-highlight correct when the date rolls over midnight
+                int todayDay = DateTime.Today.Day;
+                if (_highlightDay != todayDay && _calendarYear == DateTime.Today.Year && _calendarMonth == DateTime.Today.Month)
+                {
+                    _highlightDay = todayDay;
+                    RefreshCalendar();
+                }
+            };
+            _clockTimer.Start();
         }
 
         // ── Employee list ─────────────────────────────────────────────
@@ -72,6 +105,14 @@ namespace SOFTDEV
         {
             int count = DatabaseHelper.GetEmployeeCount();
             EmployeeCountLabel.Text = count >= 0 ? count.ToString() : "—";
+        }
+
+        /// <summary>Navigates to the Employees view.</summary>
+        private void NavigateToEmployees()
+        {
+            var employeesView = new AdminEmployeesView(_username, this);
+            this.Hide();
+            employeesView.Show();
         }
 
         // ── Calendar generation ───────────────────────────────────────
@@ -142,13 +183,11 @@ namespace SOFTDEV
             }
             else if (sender == EmployeesButton)
             {
-                var employeesView = new AdminEmployeesView(_username, this);
-                this.Hide();
-                employeesView.Show();
+                NavigateToEmployees();
             }
             else if (sender == AttendanceButton)
             {
-                var attendanceDashboard = new AttendanceDashboard(_username);
+                var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
                 this.Hide();
                 attendanceDashboard.Show();
             }
@@ -159,6 +198,12 @@ namespace SOFTDEV
         private void StatCardRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadEmployeeCount();
+        }
+
+        /// <summary>Clicking the "Number of Employees" card opens the Employees view.</summary>
+        private void StatCard0_Click(object sender, MouseButtonEventArgs e)
+        {
+            NavigateToEmployees();
         }
 
         private void ClockInOut_Click(object sender, RoutedEventArgs e)
@@ -223,6 +268,12 @@ namespace SOFTDEV
         private void EmployeeListRefresh_Click(object sender, RoutedEventArgs e)
         {
             LoadEmployees();
+        }
+
+        /// <summary>Clicking any employee row opens the Employees view.</summary>
+        private void EmployeeListItem_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToEmployees();
         }
     }
 }

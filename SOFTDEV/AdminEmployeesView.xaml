@@ -430,18 +430,22 @@
                                            FontSize="18"
                                            Margin="0,0,0,16" />
 
-                                <!-- Avatar + field grid -->
+                                <!-- Avatar + field grid wrapped in purple rounded card -->
+                                <Border Background="{StaticResource PurpleAccentBrush}"
+                                        CornerRadius="20"
+                                        Padding="24">
                                 <StackPanel Orientation="Horizontal">
 
                                     <!-- AvatarPlaceholder: 120×120 circle -->
                                     <Border Width="120"
                                             Height="120"
                                             CornerRadius="60"
-                                            Background="{StaticResource PurpleAccentBrush}">
+                                            Background="#1e1e2d">
                                         <TextBlock Text="👤"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"
-                                                   FontSize="48" />
+                                                   FontSize="48"
+                                                   Foreground="White" />
                                     </Border>
 
                                     <!-- Label / value grid for all eight fields -->
@@ -464,20 +468,23 @@
                                         <!-- Row 0: Name -->
                                         <TextBlock Grid.Row="0" Grid.Column="0"
                                                    Text="Name"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="0" Grid.Column="1"
                                                    Text="{Binding Name}"
                                                    Foreground="White"
                                                    FontSize="14"
+                                                   FontWeight="Bold"
                                                    Margin="12,0,0,8" />
 
                                         <!-- Row 1: Position -->
                                         <TextBlock Grid.Row="1" Grid.Column="0"
                                                    Text="Position"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="1" Grid.Column="1"
                                                    Text="{Binding Position}"
@@ -488,8 +495,9 @@
                                         <!-- Row 2: Salary -->
                                         <TextBlock Grid.Row="2" Grid.Column="0"
                                                    Text="Salary"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="2" Grid.Column="1"
                                                    Text="{Binding Salary, StringFormat=₱{0:N2}}"
@@ -500,8 +508,9 @@
                                         <!-- Row 3: Payroll -->
                                         <TextBlock Grid.Row="3" Grid.Column="0"
                                                    Text="Payroll"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="3" Grid.Column="1"
                                                    Text="{Binding Payroll, StringFormat=₱{0:N2}}"
@@ -512,8 +521,9 @@
                                         <!-- Row 4: Date Hired -->
                                         <TextBlock Grid.Row="4" Grid.Column="0"
                                                    Text="Date Hired"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="4" Grid.Column="1"
                                                    Text="{Binding DateHired}"
@@ -524,8 +534,9 @@
                                         <!-- Row 5: Contact No. -->
                                         <TextBlock Grid.Row="5" Grid.Column="0"
                                                    Text="Contact No."
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="5" Grid.Column="1"
                                                    Text="{Binding ContactNo}"
@@ -536,8 +547,9 @@
                                         <!-- Row 6: Address -->
                                         <TextBlock Grid.Row="6" Grid.Column="0"
                                                    Text="Address"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,8" />
                                         <TextBlock Grid.Row="6" Grid.Column="1"
                                                    Text="{Binding Address}"
@@ -548,8 +560,9 @@
                                         <!-- Row 7: Emergency Contact -->
                                         <TextBlock Grid.Row="7" Grid.Column="0"
                                                    Text="Emergency Contact"
-                                                   Foreground="#aaaaaa"
+                                                   Foreground="#1e1e2d"
                                                    FontSize="12"
+                                                   FontWeight="Bold"
                                                    Margin="0,0,0,0" />
                                         <TextBlock Grid.Row="7" Grid.Column="1"
                                                    Text="{Binding EmergencyContact}"
@@ -560,6 +573,7 @@
                                     </Grid>
 
                                 </StackPanel>
+                                </Border>
 
                             </StackPanel>
                             </Border>

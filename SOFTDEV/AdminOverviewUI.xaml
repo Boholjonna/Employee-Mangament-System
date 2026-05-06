@@ -93,13 +93,14 @@
                         Opacity="1.0"
                         Margin="4,0,4,0" />
 
-                <!-- My Team — inactive -->
+                <!-- My Employees — inactive -->
                 <Button x:Name="MyTeamTabButton"
                         Style="{StaticResource PillButtonStyle}"
                         Background="{StaticResource PurpleAccentBrush}"
                         Opacity="0.4"
-                        Margin="4,0,4,0">
-                    <Button.Content>My Team</Button.Content>
+                        Margin="4,0,4,0"
+                        Click="MyEmployeesTabButton_Click">
+                    <Button.Content>My Employees</Button.Content>
                     <Button.Triggers>
                         <EventTrigger RoutedEvent="Button.MouseEnter">
                             <BeginStoryboard>
@@ -125,7 +126,8 @@
                         Style="{StaticResource PillButtonStyle}"
                         Background="{StaticResource PurpleAccentBrush}"
                         Opacity="0.4"
-                        Margin="4,0,4,0">
+                        Margin="4,0,4,0"
+                        Click="AttendanceTabButton_Click">
                     <Button.Content>Attendance</Button.Content>
                     <Button.Triggers>
                         <EventTrigger RoutedEvent="Button.MouseEnter">
