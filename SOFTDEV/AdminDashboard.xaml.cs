@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using SOFTDEV.ViewModels;
+using SOFTDEV.Views;
 
 namespace SOFTDEV
 {
@@ -190,6 +193,24 @@ namespace SOFTDEV
                 var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
                 this.Hide();
                 attendanceDashboard.Show();
+            }
+            else if (sender == ToDoButton)
+            {
+                MainContentGrid.Children.Clear();
+                MainContentGrid.ColumnDefinitions.Clear();
+
+                ToDoButton.Background       = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
+                OverviewButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+                EmployeesButton.Background  = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+                AttendanceButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+                ReportsButton.Background    = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+                LeavesButton.Background     = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+                SettingsButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+
+                var vm = new AdminToDoViewModel(_username);
+                var todoTab = new AdminToDoTab { DataContext = vm };
+                Grid.SetColumnSpan(todoTab, 3);
+                MainContentGrid.Children.Add(todoTab);
             }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }

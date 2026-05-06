@@ -61,7 +61,7 @@ namespace SOFTDEV
             }
             else if (sender == ToDoButton)
             {
-                Debug.WriteLine("[AttendanceDashboard] To Do navigation not yet implemented.");
+                Debug.WriteLine("[AttendanceDashboard] Task Management navigation not yet implemented.");
             }
             else if (sender == ReportsButton)
             {
