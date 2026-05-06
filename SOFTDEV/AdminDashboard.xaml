@@ -92,7 +92,7 @@
 
                 <Button x:Name="ToDoButton"
                         Style="{StaticResource PillButtonStyle}"
-                        Content="To Do"
+                        Content="Task Management"
                         Margin="4,0,4,0"
                         Click="NavButton_Click" />
 

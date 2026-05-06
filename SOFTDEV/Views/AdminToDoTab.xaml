@@ -1,0 +1,339 @@
+<UserControl x:Class="SOFTDEV.Views.AdminToDoTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:SOFTDEV.ViewModels"
+             Background="{StaticResource DarkBackgroundBrush}">
+
+    <UserControl.Resources>
+
+        <!-- PillTextBoxStyle -->
+        <Style x:Key="PillTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Foreground"  Value="White" />
+            <Setter Property="CaretBrush"  Value="White" />
+            <Setter Property="FontSize"    Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="#4a447d"
+                                CornerRadius="25"
+                                Padding="20,10">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- PillComboBoxStyle -->
+        <Style x:Key="PillComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize"   Value="14" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border Background="#4a447d"
+                                    CornerRadius="25"
+                                    Padding="20,10">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Col 0: selected value or placeholder -->
+                                    <Grid Grid.Column="0">
+                                        <ContentPresenter x:Name="ContentSite"
+                                                          Content="{TemplateBinding SelectionBoxItem}"
+                                                          VerticalAlignment="Center"
+                                                          Visibility="Visible" />
+                                        <TextBlock x:Name="Placeholder"
+                                                   Text="{TemplateBinding Tag}"
+                                                   Foreground="#aaaaaa"
+                                                   VerticalAlignment="Center"
+                                                   IsHitTestVisible="False"
+                                                   Visibility="Collapsed" />
+                                    </Grid>
+                                    <!-- Col 1: arrow indicator -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="▾"
+                                               Foreground="White"
+                                               VerticalAlignment="Center"
+                                               Margin="8,0,0,0" />
+                                </Grid>
+                            </Border>
+                            <!-- Dropdown popup -->
+                            <Popup x:Name="PART_Popup"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True">
+                                <Border Background="#4a447d"
+                                        CornerRadius="12"
+                                        Padding="4">
+                                    <ScrollViewer>
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- When no item is selected, show placeholder and hide content -->
+                            <Trigger Property="SelectedItem" Value="{x:Null}">
+                                <Setter TargetName="Placeholder"  Property="Visibility" Value="Visible" />
+                                <Setter TargetName="ContentSite"  Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ActionButtonStyle -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background"  Value="#8b7ed6" />
+            <Setter Property="Foreground"  Value="Black" />
+            <Setter Property="FontWeight"  Value="Bold" />
+            <Setter Property="FontSize"    Value="14" />
+            <Setter Property="Cursor"      Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="25"
+                                Padding="32,12">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#7b6ec8" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Background" Value="#3a3560" />
+                                <Setter TargetName="Bd" Property="Opacity"    Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- UtilityButtonStyle -->
+        <Style x:Key="UtilityButtonStyle" TargetType="Button">
+            <Setter Property="Background"  Value="#554a9e" />
+            <Setter Property="Foreground"  Value="White" />
+            <Setter Property="FontSize"    Value="12" />
+            <Setter Property="Opacity"     Value="0.7" />
+            <Setter Property="Cursor"      Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                Padding="14,6"
+                                Opacity="{TemplateBinding Opacity}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="1.0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: header -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <!-- Col 0: Greeting -->
+            <TextBlock Grid.Column="0"
+                       Text="{Binding AdminName, StringFormat='Hello {0}! 👋'}"
+                       Foreground="#a294f9"
+                       FontSize="13"
+                       VerticalAlignment="Center"
+                       Margin="60,12,0,8"
+                       AutomationProperties.Name="Greeting" />
+            <!-- Col 1: Utility buttons -->
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,12,60,8">
+                <Button Content="FILTER ▾"
+                        Style="{StaticResource UtilityButtonStyle}"
+                        Command="{Binding FilterCommand}"
+                        AutomationProperties.Name="Filter Tasks"
+                        Margin="0,0,8,0" />
+                <Button Content="SORT ▾"
+                        Style="{StaticResource UtilityButtonStyle}"
+                        Command="{Binding SortCommand}"
+                        AutomationProperties.Name="Sort Tasks" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Row 1: section headers -->
+        <StackPanel Grid.Row="1" Margin="60,0,60,8">
+            <TextBlock Text="Task Management"
+                       Foreground="White"
+                       FontWeight="Bold"
+                       FontSize="20" />
+            <TextBlock Text="ADD TASK:"
+                       Foreground="White"
+                       FontSize="16"
+                       FontFamily="Georgia"
+                       Margin="0,4,0,0" />
+        </StackPanel>
+
+        <!-- Row 2: task form -->
+        <StackPanel x:Name="Task_Form"
+                    Grid.Row="2"
+                    Margin="60,0,60,12">
+
+            <!-- Title field -->
+            <TextBlock x:Name="TitleLabel"
+                       Text="Task Title: (required)"
+                       Foreground="White"
+                       FontSize="13"
+                       Margin="0,0,0,4" />
+            <TextBox Style="{StaticResource PillTextBoxStyle}"
+                     Text="{Binding TaskTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,12"
+                     AutomationProperties.LabeledBy="{Binding ElementName=TitleLabel}" />
+
+            <!-- Description field -->
+            <TextBlock x:Name="DescLabel"
+                       Text="Description: (mandatory)"
+                       Foreground="White"
+                       FontSize="13"
+                       Margin="0,0,0,4" />
+            <TextBox Style="{StaticResource PillTextBoxStyle}"
+                     Text="{Binding TaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     MinHeight="60"
+                     Margin="0,0,0,12"
+                     AutomationProperties.LabeledBy="{Binding ElementName=DescLabel}" />
+
+            <!-- Assignee + DueDate row -->
+            <Grid Margin="0,0,0,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0"
+                          Style="{StaticResource PillComboBoxStyle}"
+                          Tag="Assigned to:"
+                          SelectedValue="{Binding AssignedTo, Mode=TwoWay}"
+                          Margin="0,0,8,0"
+                          x:Name="AssigneeCombo"
+                          AutomationProperties.Name="Assigned To" />
+                <ComboBox Grid.Column="1"
+                          Style="{StaticResource PillComboBoxStyle}"
+                          Tag="Due Date:"
+                          SelectedValue="{Binding DueDate, Mode=TwoWay}"
+                          x:Name="DueDateCombo"
+                          AutomationProperties.Name="Due Date" />
+            </Grid>
+
+            <!-- Save + Cancel row -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,4,0,0">
+                <Button Content="Save"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Command="{Binding SaveTaskCommand}"
+                        Margin="0,0,12,0"
+                        AutomationProperties.Name="Save Task" />
+                <Button Content="Cancel"
+                        Style="{StaticResource ActionButtonStyle}"
+                        Command="{Binding CancelTaskCommand}"
+                        AutomationProperties.Name="Cancel Task" />
+            </StackPanel>
+
+        </StackPanel>
+
+        <!-- Row 3: task list -->
+        <ScrollViewer Grid.Row="3"
+                      VerticalScrollBarVisibility="Auto"
+                      Margin="60,0,60,20">
+            <ScrollViewer.Resources>
+                <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
+            </ScrollViewer.Resources>
+            <Grid>
+                <!-- Task items -->
+                <ItemsControl ItemsSource="{Binding Tasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1a1a2e"
+                                    CornerRadius="8"
+                                    Padding="16"
+                                    Margin="0,0,0,8">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}"
+                                               Foreground="White"
+                                               FontWeight="Bold"
+                                               FontSize="14" />
+                                    <TextBlock Text="{Binding Description}"
+                                               Foreground="#aaaaaa"
+                                               FontSize="12"
+                                               TextWrapping="Wrap" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding AssignedTo}"
+                                                   Foreground="#888888"
+                                                   FontSize="11"
+                                                   Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding DueDate}"
+                                                   Foreground="#888888"
+                                                   FontSize="11" />
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Status}"
+                                               Foreground="{StaticResource PurpleAccentBrush}"
+                                               FontSize="11" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!-- Empty state message -->
+                <TextBlock Text="No tasks yet."
+                           Foreground="#888888"
+                           FontSize="14"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Margin="0,24,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Tasks.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

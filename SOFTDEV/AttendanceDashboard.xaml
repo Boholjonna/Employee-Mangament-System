@@ -161,7 +161,7 @@
                 <!-- Task Management — inactive -->
                 <Button x:Name="ToDoButton"
                         Style="{StaticResource PillButtonStyle}"
-                        Content="To Do"
+                        Content="Task Management"
                         Background="{StaticResource PurpleAccentBrush}"
                         Opacity="0.4"
                         Margin="4,0,4,0"

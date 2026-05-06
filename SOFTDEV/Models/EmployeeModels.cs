@@ -88,4 +88,18 @@ namespace SOFTDEV
         public string EventName { get; set; } = string.Empty;
         public string EventDate { get; set; } = string.Empty;
     }
+
+    /// <summary>
+    /// Represents a task created by an admin in the AdminToDoTab.
+    /// </summary>
+    public class AdminTaskItem
+    {
+        public Guid     Id          { get; set; } = Guid.NewGuid();
+        public string   Title       { get; set; } = string.Empty;
+        public string   Description { get; set; } = string.Empty;
+        public string   AssignedTo  { get; set; } = string.Empty;
+        public string?  DueDate     { get; set; }
+        public DateTime CreatedAt   { get; set; } = DateTime.Now;
+        public string   Status      { get; set; } = "Pending";
+    }
 }
