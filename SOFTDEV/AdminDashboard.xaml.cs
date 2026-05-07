@@ -118,6 +118,39 @@ namespace SOFTDEV
             employeesView.Show();
         }
 
+        /// <summary>Navigates to the Task Management tab.</summary>
+        private void NavigateToToDoTab()
+        {
+            MainContentGrid.Children.Clear();
+            MainContentGrid.ColumnDefinitions.Clear();
+
+            ToDoButton.Background       = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
+            OverviewButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            EmployeesButton.Background  = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            AttendanceButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            ReportsButton.Background    = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            LeavesButton.Background     = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            SettingsButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+
+            var vm = new AdminToDoViewModel(_username);
+            var todoTab = new AdminToDoTab
+            {
+                DataContext = vm,
+                OnBack = RestoreDashboardView
+            };
+            Grid.SetColumnSpan(todoTab, 3);
+            MainContentGrid.Children.Add(todoTab);
+        }
+
+        /// <summary>Restores the default dashboard view (3-column layout).</summary>
+        private void RestoreDashboardView()
+        {
+            // Reload the window to restore the original XAML layout
+            var newDashboard = new AdminDashboard(_username);
+            newDashboard.Show();
+            this.Close();
+        }
+
         // ── Calendar generation ───────────────────────────────────────
 
         /// <summary>
@@ -196,21 +229,7 @@ namespace SOFTDEV
             }
             else if (sender == ToDoButton)
             {
-                MainContentGrid.Children.Clear();
-                MainContentGrid.ColumnDefinitions.Clear();
-
-                ToDoButton.Background       = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
-                OverviewButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-                EmployeesButton.Background  = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-                AttendanceButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-                ReportsButton.Background    = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-                LeavesButton.Background     = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-                SettingsButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-
-                var vm = new AdminToDoViewModel(_username);
-                var todoTab = new AdminToDoTab { DataContext = vm };
-                Grid.SetColumnSpan(todoTab, 3);
-                MainContentGrid.Children.Add(todoTab);
+                NavigateToToDoTab();
             }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }

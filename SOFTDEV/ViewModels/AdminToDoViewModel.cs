@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using SOFTDEV;
 
 namespace SOFTDEV.ViewModels
@@ -16,11 +17,15 @@ namespace SOFTDEV.ViewModels
         /// <summary>The admin's display name, set once in the constructor.</summary>
         public string AdminName { get; }
 
+        // ── Employee list for AssignedTo ComboBox ─────────────────────────
+        /// <summary>Employee names loaded from the database for the Assigned To dropdown.</summary>
+        public ObservableCollection<string> EmployeeNames { get; } = new();
+
         // ── Form field backing fields ─────────────────────────────────────
         private string  _taskTitle       = string.Empty;
         private string  _taskDescription = string.Empty;
         private string  _assignedTo      = string.Empty;
-        private string? _dueDate;
+        private DateTime? _dueDate;
 
         // ── Form field properties (TwoWay bindings) ───────────────────────
         public string TaskTitle
@@ -54,7 +59,7 @@ namespace SOFTDEV.ViewModels
             }
         }
 
-        public string? DueDate
+        public DateTime? DueDate
         {
             get => _dueDate;
             set
@@ -79,6 +84,9 @@ namespace SOFTDEV.ViewModels
         {
             AdminName = adminName;
 
+            // Load employee names from DB for the AssignedTo dropdown
+            LoadEmployeeNames();
+
             SaveTaskCommand = new RelayCommand(
                 execute:    _ => ExecuteSave(),
                 canExecute: _ => !string.IsNullOrWhiteSpace(TaskTitle)
@@ -89,15 +97,52 @@ namespace SOFTDEV.ViewModels
             SortCommand       = new RelayCommand(_ => { /* stub — future implementation */ });
         }
 
+        // ── Load employees ────────────────────────────────────────────────
+        private void LoadEmployeeNames()
+        {
+            try
+            {
+                var employees = DatabaseHelper.GetAllEmployees();
+                EmployeeNames.Clear();
+                foreach (var emp in employees)
+                    EmployeeNames.Add(emp.Name);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ViewModel] LoadEmployeeNames error: {ex.Message}");
+            }
+        }
+
         // ── Command implementations ───────────────────────────────────────
         private void ExecuteSave()
         {
+            string title       = TaskTitle.Trim();
+            string description = TaskDescription.Trim();
+            string assignedTo  = AssignedTo;
+            // Format date as yyyy-MM-dd for the varchar column, or empty string if not picked
+            string dueDate     = DueDate.HasValue
+                ? DueDate.Value.ToString("yyyy-MM-dd")
+                : string.Empty;
+
+            // Persist to database
+            bool saved = DatabaseHelper.SaveTask(title, description, assignedTo, dueDate);
+            if (!saved)
+            {
+                MessageBox.Show(
+                    "Failed to save task to the database. Please check your connection.",
+                    "Save Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            // Add to in-memory list for immediate UI feedback
             Tasks.Add(new AdminTaskItem
             {
-                Title       = TaskTitle.Trim(),
-                Description = TaskDescription.Trim(),
-                AssignedTo  = AssignedTo,
-                DueDate     = DueDate,
+                Title       = title,
+                Description = description,
+                AssignedTo  = assignedTo,
+                DueDate     = dueDate,
                 CreatedAt   = DateTime.Now,
                 Status      = "Pending"
             });

@@ -31,60 +31,115 @@
         <Style x:Key="PillComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize"   Value="14" />
+            <!-- Style each dropdown item: white text, hover highlight -->
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground"  Value="White" />
+                        <Setter Property="Background"  Value="Transparent" />
+                        <Setter Property="Padding"     Value="16,8" />
+                        <Setter Property="Cursor"      Value="Hand" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="ItemBd"
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="6"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ItemBd" Property="Background" Value="#6a5acd" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ItemBd" Property="Background" Value="#7b6ec8" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
-                            <Border Background="#4a447d"
-                                    CornerRadius="25"
-                                    Padding="20,10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <!-- Col 0: selected value or placeholder -->
-                                    <Grid Grid.Column="0">
-                                        <ContentPresenter x:Name="ContentSite"
-                                                          Content="{TemplateBinding SelectionBoxItem}"
-                                                          VerticalAlignment="Center"
-                                                          Visibility="Visible" />
-                                        <TextBlock x:Name="Placeholder"
-                                                   Text="{TemplateBinding Tag}"
-                                                   Foreground="#aaaaaa"
-                                                   VerticalAlignment="Center"
-                                                   IsHitTestVisible="False"
-                                                   Visibility="Collapsed" />
-                                    </Grid>
-                                    <!-- Col 1: arrow indicator -->
-                                    <TextBlock Grid.Column="1"
-                                               Text="▾"
-                                               Foreground="White"
-                                               VerticalAlignment="Center"
-                                               Margin="8,0,0,0" />
-                                </Grid>
-                            </Border>
+                            <!-- ToggleButton covers the entire pill and toggles the dropdown on click -->
+                            <ToggleButton x:Name="ToggleBtn"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                      RelativeSource={RelativeSource TemplatedParent}}"
+                                          Focusable="False"
+                                          Cursor="Hand">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Pill"
+                                                Background="#4a447d"
+                                                CornerRadius="25"
+                                                Padding="20,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- selected value or placeholder -->
+                                                <Grid Grid.Column="0">
+                                                    <TextBlock x:Name="SelectedText"
+                                                               Text="{Binding SelectionBoxItem,
+                                                                      RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center"
+                                                               Visibility="Visible" />
+                                                    <TextBlock x:Name="Placeholder"
+                                                               Text="{Binding Tag,
+                                                                      RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                               Foreground="#aaaaaa"
+                                                               VerticalAlignment="Center"
+                                                               IsHitTestVisible="False"
+                                                               Visibility="Collapsed" />
+                                                </Grid>
+                                                <!-- arrow -->
+                                                <TextBlock Grid.Column="1"
+                                                           Text="▾"
+                                                           Foreground="White"
+                                                           VerticalAlignment="Center"
+                                                           Margin="8,0,0,0" />
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Pill" Property="Background" Value="#5a5490" />
+                                            </Trigger>
+                                            <!-- hide placeholder when an item is selected -->
+                                            <DataTrigger Binding="{Binding SelectedItem,
+                                                         RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                         Value="{x:Null}">
+                                                <Setter TargetName="Placeholder"  Property="Visibility" Value="Visible" />
+                                                <Setter TargetName="SelectedText" Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
                             <!-- Dropdown popup -->
                             <Popup x:Name="PART_Popup"
                                    IsOpen="{TemplateBinding IsDropDownOpen}"
                                    Placement="Bottom"
-                                   AllowsTransparency="True">
+                                   AllowsTransparency="True"
+                                   StaysOpen="False">
                                 <Border Background="#4a447d"
                                         CornerRadius="12"
-                                        Padding="4">
-                                    <ScrollViewer>
+                                        Padding="4"
+                                        MinWidth="{Binding ActualWidth,
+                                                   RelativeSource={RelativeSource AncestorType=ComboBox}}">
+                                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
                                         <ItemsPresenter />
                                     </ScrollViewer>
                                 </Border>
                             </Popup>
                         </Grid>
-                        <ControlTemplate.Triggers>
-                            <!-- When no item is selected, show placeholder and hide content -->
-                            <Trigger Property="SelectedItem" Value="{x:Null}">
-                                <Setter TargetName="Placeholder"  Property="Visibility" Value="Visible" />
-                                <Setter TargetName="ContentSite"  Property="Visibility" Value="Collapsed" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -192,10 +247,20 @@
 
         <!-- Row 1: section headers -->
         <StackPanel Grid.Row="1" Margin="60,0,60,8">
-            <TextBlock Text="Task Management"
-                       Foreground="White"
-                       FontWeight="Bold"
-                       FontSize="20" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                <Button x:Name="BackButton"
+                        Content="← Back"
+                        Style="{StaticResource UtilityButtonStyle}"
+                        Opacity="1"
+                        Margin="0,0,12,0"
+                        Click="BackButton_Click"
+                        AutomationProperties.Name="Back to Dashboard" />
+                <TextBlock Text="Task Management"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="20"
+                           VerticalAlignment="Center" />
+            </StackPanel>
             <TextBlock Text="ADD TASK:"
                        Foreground="White"
                        FontSize="16"
@@ -239,19 +304,72 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+
+                <!-- Assigned To -->
                 <ComboBox Grid.Column="0"
                           Style="{StaticResource PillComboBoxStyle}"
                           Tag="Assigned to:"
-                          SelectedValue="{Binding AssignedTo, Mode=TwoWay}"
+                          ItemsSource="{Binding EmployeeNames}"
+                          SelectedItem="{Binding AssignedTo, Mode=TwoWay}"
                           Margin="0,0,8,0"
                           x:Name="AssigneeCombo"
                           AutomationProperties.Name="Assigned To" />
-                <ComboBox Grid.Column="1"
-                          Style="{StaticResource PillComboBoxStyle}"
-                          Tag="Due Date:"
-                          SelectedValue="{Binding DueDate, Mode=TwoWay}"
-                          x:Name="DueDateCombo"
-                          AutomationProperties.Name="Due Date" />
+
+                <!-- Due Date -->
+                <Border Grid.Column="1"
+                        Background="#4a447d"
+                        CornerRadius="25"
+                        Padding="20,0">
+                    <Grid>
+                        <!-- Watermark label — hidden once a date is picked -->
+                        <TextBlock Text="Due Date"
+                                   Foreground="#aaaaaa"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Panel.ZIndex="1">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=DueDatePicker}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <!-- The actual DatePicker — transparent background so pill shows through -->
+                        <DatePicker x:Name="DueDatePicker"
+                                    SelectedDate="{Binding DueDate, Mode=TwoWay}"
+                                    Foreground="White"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Due Date">
+                            <DatePicker.Resources>
+                                <Style TargetType="DatePickerTextBox">
+                                    <Setter Property="Foreground"               Value="White" />
+                                    <Setter Property="Background"               Value="Transparent" />
+                                    <Setter Property="BorderThickness"          Value="0" />
+                                    <Setter Property="FontSize"                 Value="14" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="DatePickerTextBox">
+                                                <ScrollViewer x:Name="PART_ContentHost"
+                                                              Foreground="White"
+                                                              Background="Transparent"
+                                                              VerticalAlignment="Center" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
+                    </Grid>
+                </Border>
             </Grid>
 
             <!-- Save + Cancel row -->

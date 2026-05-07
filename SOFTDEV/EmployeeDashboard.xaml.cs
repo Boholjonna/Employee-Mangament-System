@@ -41,7 +41,7 @@ namespace SOFTDEV
                     break;
 
                 case "Tasks":
-                    MainContentControl.Content = new EmployeeTasksView();
+                    MainContentControl.Content = new EmployeeTasksView(LoggedInEmployeeName);
                     HighlightButton(TasksButton);
                     break;
 
