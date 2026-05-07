@@ -7,10 +7,19 @@ namespace SOFTDEV.Views
 {
     public partial class EmployeeTasksView : UserControl
     {
+        private readonly string _employeeName;
         private List<TaskItem> _allTasks = new();
 
-        public EmployeeTasksView()
+        /// <summary>
+        /// Creates the view and loads tasks assigned to the given employee from the database.
+        /// </summary>
+        /// <param name="employeeName">
+        /// The logged-in employee's name, matched against the <c>assignedto</c> column in the task table.
+        /// </param>
+        public EmployeeTasksView(string employeeName)
         {
+            _employeeName = employeeName;
+
             try
             {
                 InitializeComponent();
@@ -36,122 +45,36 @@ namespace SOFTDEV.Views
 
         private void LoadTasks()
         {
-            _allTasks = new List<TaskItem>
-            {
-                new TaskItem
-                {
-                    Title = "Complete Q2 Report",
-                    Description = "Finalize quarterly performance report with all metrics and analysis",
-                    Status = "In Progress",
-                    StatusColor = "#ff9800",
-                    DueDate = "Due: May 28, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Review Code Changes",
-                    Description = "Review pull request #234 for the new authentication module",
-                    Status = "Not Started",
-                    StatusColor = "#f44336",
-                    DueDate = "Due: May 25, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Team Meeting Preparation",
-                    Description = "Prepare slides and agenda for weekly team sync meeting",
-                    Status = "Completed",
-                    StatusColor = "#4caf50",
-                    DueDate = "Completed: May 20, 2026",
-                    IsCompleted = true
-                },
-                new TaskItem
-                {
-                    Title = "Update Documentation",
-                    Description = "Update API documentation for v2.0 release with new endpoints",
-                    Status = "In Progress",
-                    StatusColor = "#ff9800",
-                    DueDate = "Due: May 30, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Client Presentation",
-                    Description = "Present project progress and roadmap to client stakeholders",
-                    Status = "Not Started",
-                    StatusColor = "#f44336",
-                    DueDate = "Due: June 5, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Database Optimization",
-                    Description = "Optimize slow queries and add proper indexes",
-                    Status = "In Progress",
-                    StatusColor = "#ff9800",
-                    DueDate = "Due: May 27, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Security Audit",
-                    Description = "Conduct security audit of authentication system",
-                    Status = "Completed",
-                    StatusColor = "#4caf50",
-                    DueDate = "Completed: May 18, 2026",
-                    IsCompleted = true
-                },
-                new TaskItem
-                {
-                    Title = "Unit Tests",
-                    Description = "Write unit tests for new payment module",
-                    Status = "In Progress",
-                    StatusColor = "#ff9800",
-                    DueDate = "Due: May 29, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Performance Testing",
-                    Description = "Run load tests on production environment",
-                    Status = "Completed",
-                    StatusColor = "#4caf50",
-                    DueDate = "Completed: May 19, 2026",
-                    IsCompleted = true
-                },
-                new TaskItem
-                {
-                    Title = "Bug Fixes",
-                    Description = "Fix reported bugs in user dashboard",
-                    Status = "In Progress",
-                    StatusColor = "#ff9800",
-                    DueDate = "Due: May 26, 2026",
-                    IsCompleted = false
-                },
-                new TaskItem
-                {
-                    Title = "Code Review Training",
-                    Description = "Complete code review best practices training",
-                    Status = "Completed",
-                    StatusColor = "#4caf50",
-                    DueDate = "Completed: May 15, 2026",
-                    IsCompleted = true
-                },
-                new TaskItem
-                {
-                    Title = "Sprint Planning",
-                    Description = "Participate in sprint planning for next iteration",
-                    Status = "Completed",
-                    StatusColor = "#4caf50",
-                    DueDate = "Completed: May 21, 2026",
-                    IsCompleted = true
-                }
-            };
+            _allTasks = DatabaseHelper.GetTasksByEmployee(_employeeName);
 
             if (TaskListControl != null)
-            {
                 TaskListControl.ItemsSource = _allTasks;
-            }
+
+            UpdateEmptyState();
+            UpdateStatCards();
+        }
+
+        /// <summary>Shows or hides the "No task available" message based on task count.</summary>
+        private void UpdateEmptyState()
+        {
+            if (NoTasksMessage != null)
+                NoTasksMessage.Visibility = _allTasks.Count == 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+        }
+
+        /// <summary>Updates the stat card numbers to reflect the actual DB data.</summary>
+        private void UpdateStatCards()
+        {
+            int total      = _allTasks.Count;
+            int inProgress = _allTasks.FindAll(t => t.Status == "In Progress").Count;
+            int completed  = _allTasks.FindAll(t => t.Status == "Completed").Count;
+            int notStarted = _allTasks.FindAll(t => t.Status == "Not Started").Count;
+
+            if (TotalTasksCount  != null) TotalTasksCount.Text  = total.ToString();
+            if (InProgressCount  != null) InProgressCount.Text  = inProgress.ToString();
+            if (CompletedCount   != null) CompletedCount.Text   = completed.ToString();
+            if (NotStartedCount  != null) NotStartedCount.Text  = notStarted.ToString();
         }
 
         private void TaskFilter_Changed(object sender, SelectionChangedEventArgs e)
@@ -161,19 +84,23 @@ namespace SOFTDEV.Views
                 if (TaskFilterComboBox?.SelectedItem is ComboBoxItem selected)
                 {
                     string filter = selected.Content?.ToString() ?? "All Tasks";
-                    
+
                     List<TaskItem> filteredTasks = filter switch
                     {
                         "In Progress" => _allTasks.FindAll(t => t.Status == "In Progress"),
-                        "Completed" => _allTasks.FindAll(t => t.Status == "Completed"),
+                        "Completed"   => _allTasks.FindAll(t => t.Status == "Completed"),
                         "Not Started" => _allTasks.FindAll(t => t.Status == "Not Started"),
-                        _ => _allTasks
+                        _             => _allTasks
                     };
 
                     if (TaskListControl != null)
-                    {
                         TaskListControl.ItemsSource = filteredTasks;
-                    }
+
+                    // Show empty state if filtered list is empty
+                    if (NoTasksMessage != null)
+                        NoTasksMessage.Visibility = filteredTasks.Count == 0
+                            ? Visibility.Visible
+                            : Visibility.Collapsed;
                 }
             }
             catch (Exception ex)

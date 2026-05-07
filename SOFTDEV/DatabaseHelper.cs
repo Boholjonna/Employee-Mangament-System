@@ -335,6 +335,83 @@ namespace SOFTDEV
             }
         }
 
+        // ── Task management ──────────────────────────────────────────────────
+
+        /// <summary>
+        /// Inserts a new row into the <c>task</c> table.
+        /// </summary>
+        /// <param name="taskTitle">The task title.</param>
+        /// <param name="description">The task description.</param>
+        /// <param name="assignedTo">The employee name the task is assigned to.</param>
+        /// <param name="dueDate">The due date string.</param>
+        /// <returns><see langword="true"/> if the insert succeeded.</returns>
+        public static bool SaveTask(string taskTitle, string description, string assignedTo, string dueDate)
+        {
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "INSERT INTO task (tasktitle, description, assignedto, duedate) " +
+                    "VALUES (@tasktitle, @description, @assignedto, @duedate)";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@tasktitle",    taskTitle);
+                cmd.Parameters.AddWithValue("@description",  description);
+                cmd.Parameters.AddWithValue("@assignedto",   assignedTo);
+                cmd.Parameters.AddWithValue("@duedate",      dueDate);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] SaveTask error: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns all tasks from the <c>task</c> table where <c>assignedto</c>
+        /// matches the employee's <c>name</c> column value.
+        /// </summary>
+        /// <param name="employeeName">The employee's name as stored in the employee table.</param>
+        /// <returns>A list of <see cref="TaskItem"/> objects, or an empty list if none found.</returns>
+        public static List<TaskItem> GetTasksByEmployee(string employeeName)
+        {
+            var list = new List<TaskItem>();
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT tasktitle, description, duedate " +
+                    "FROM task " +
+                    "WHERE assignedto = @name";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@name", employeeName);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    list.Add(new TaskItem
+                    {
+                        Title       = reader.IsDBNull(0) ? "" : reader.GetString(0),
+                        Description = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                        DueDate     = reader.IsDBNull(2) ? "" : $"Due: {reader.GetString(2)}",
+                        Status      = "Pending",
+                        StatusColor = "#7b61ff",
+                        IsCompleted = false,
+                    });
+                }
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetTasksByEmployee error: {ex.Message}");
+            }
+            return list;
+        }
+
         // ── Connection test ───────────────────────────────────────────────────
 
         /// <summary>
