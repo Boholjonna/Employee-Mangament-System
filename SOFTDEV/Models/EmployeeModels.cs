@@ -44,6 +44,7 @@ namespace SOFTDEV
         public string Status { get; set; } = string.Empty;
         public string StatusColor { get; set; } = string.Empty;
         public string DueDate { get; set; } = string.Empty;
+        public string EstimatedHours { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
 
         /// <summary>

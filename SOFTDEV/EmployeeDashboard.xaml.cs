@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using SOFTDEV.Views;
 
@@ -27,7 +28,7 @@ namespace SOFTDEV
         }
 
         // ── Navigation Method ─────────────────────────────────────────
-        private void NavigateToSection(string sectionName)
+        public void NavigateToSection(string sectionName)
         {
             // Clear current content
             MainContentControl.Content = null;
@@ -36,7 +37,7 @@ namespace SOFTDEV
             switch (sectionName)
             {
                 case "Dashboard":
-                    MainContentControl.Content = new EmployeeDashboardView();
+                    MainContentControl.Content = new EmployeeDashboardView(LoggedInEmployeeName);
                     HighlightButton(DashboardButton);
                     break;
 
@@ -66,7 +67,7 @@ namespace SOFTDEV
                     break;
 
                 default:
-                    MainContentControl.Content = new EmployeeDashboardView();
+                    MainContentControl.Content = new EmployeeDashboardView(LoggedInEmployeeName);
                     HighlightButton(DashboardButton);
                     break;
             }
@@ -75,16 +76,34 @@ namespace SOFTDEV
         // ── Button Highlighting ───────────────────────────────────────
         private void HighlightButton(Button activeButton)
         {
-            // Reset all buttons to default style
-            DashboardButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
-            TasksButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
-            AttendanceButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
-            PerformanceButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
-            ReportsButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
-            SettingsButton.Background = new SolidColorBrush(Color.FromRgb(123, 97, 255));
+            Color defaultColor = Color.FromRgb(123, 97, 255);     // Purple
+            Color activeColor = Color.FromRgb(200, 100, 255);     // Violet-Pink
+            TimeSpan duration = TimeSpan.FromMilliseconds(300);
 
-            // Highlight the active button
-            activeButton.Background = new SolidColorBrush(Color.FromRgb(106, 82, 224)); // Darker purple
+            // Reset all buttons with animation
+            foreach (Button btn in new[] { DashboardButton, TasksButton, AttendanceButton, PerformanceButton, ReportsButton, SettingsButton })
+            {
+                AnimateButtonColor(btn, defaultColor, duration);
+            }
+
+            // Highlight the active button with animation
+            AnimateButtonColor(activeButton, activeColor, duration);
+        }
+
+        private void AnimateButtonColor(Button button, Color targetColor, TimeSpan duration)
+        {
+            // Create a new brush that is NOT frozen, so we can animate it
+            SolidColorBrush animatableBrush = new SolidColorBrush(button.Background is SolidColorBrush sb ? sb.Color : Color.FromRgb(123, 97, 255));
+            button.Background = animatableBrush;
+
+            ColorAnimation colorAnimation = new ColorAnimation
+            {
+                To = targetColor,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+
+            animatableBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnimation);
         }
 
         // ── Control Group handlers ────────────────────────────────────
@@ -98,11 +117,6 @@ namespace SOFTDEV
         {
             System.Diagnostics.Debug.WriteLine(nameof(NotificationButton_Click));
             MessageBox.Show("You have 4 new notifications!", "Notifications", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void UserNameButton_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine(nameof(UserNameButton_Click));
         }
 
         private void AvatarButton_Click(object sender, RoutedEventArgs e)

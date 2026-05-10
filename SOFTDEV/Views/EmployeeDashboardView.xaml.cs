@@ -10,8 +10,11 @@ namespace SOFTDEV.Views
 {
     public partial class EmployeeDashboardView : UserControl
     {
-        public EmployeeDashboardView()
+        private readonly string _employeeName;
+
+        public EmployeeDashboardView(string employeeName)
         {
+            _employeeName = employeeName ?? string.Empty;
             InitializeComponent();
             Loaded += EmployeeDashboardView_Loaded;
         }
@@ -51,6 +54,18 @@ namespace SOFTDEV.Views
             // Draw charts
             DrawProgressChart();
             DrawAttendanceChart();
+
+            // Set greeting using provided employee name
+            if (!string.IsNullOrEmpty(_employeeName) && GreetingText != null)
+                GreetingText.Text = $"Hello {_employeeName}! 👋";
+
+            // Wire quick actions
+            if (DownloadReportButton != null)
+                DownloadReportButton.Click += (s, ev) =>
+                {
+                    if (Window.GetWindow(this) is EmployeeDashboard parent)
+                        parent.NavigateToSection("Reports");
+                };
         }
 
         private void DrawProgressChart()
@@ -60,6 +75,22 @@ namespace SOFTDEV.Views
             double width = ProgressChartCanvas.ActualWidth > 0 ? ProgressChartCanvas.ActualWidth : 500;
             double height = 200;
             double[] data = { 45, 52, 68, 75, 85 };
+            double offsetX = 40; // Offset to prevent overlap with Y-axis labels
+
+            // Draw Y-axis labels (percent)
+            for (int i = 0; i <= 4; i++)
+            {
+                double y = height - (i * height / 4);
+                TextBlock yLabel = new TextBlock
+                {
+                    Text = (i * 25).ToString() + "%",
+                    Foreground = new SolidColorBrush(Color.FromRgb(170,170,170)),
+                    FontSize = 10
+                };
+                Canvas.SetLeft(yLabel, 4);
+                Canvas.SetTop(yLabel, y - 10);
+                ProgressChartCanvas.Children.Add(yLabel);
+            }
 
             // Draw grid lines
             for (int i = 0; i <= 4; i++)
@@ -67,7 +98,7 @@ namespace SOFTDEV.Views
                 double y = height - (i * height / 4);
                 Line gridLine = new Line
                 {
-                    X1 = 0,
+                    X1 = offsetX,
                     Y1 = y,
                     X2 = width,
                     Y2 = y,
@@ -78,12 +109,12 @@ namespace SOFTDEV.Views
             }
 
             // Draw line chart
-            double segmentWidth = width / (data.Length - 1);
+            double segmentWidth = (width - offsetX) / (data.Length - 1);
             for (int i = 0; i < data.Length - 1; i++)
             {
-                double x1 = i * segmentWidth;
+                double x1 = offsetX + i * segmentWidth;
                 double y1 = height - (data[i] / 100.0 * height);
-                double x2 = (i + 1) * segmentWidth;
+                double x2 = offsetX + (i + 1) * segmentWidth;
                 double y2 = height - (data[i + 1] / 100.0 * height);
 
                 Line line = new Line
@@ -114,9 +145,34 @@ namespace SOFTDEV.Views
                 Height = 8,
                 Fill = new SolidColorBrush(Color.FromRgb(123, 97, 255))
             };
-            Canvas.SetLeft(lastPoint, width - 4);
+            double lastX = offsetX + (data.Length - 1) * segmentWidth;
+            Canvas.SetLeft(lastPoint, lastX - 4);
             Canvas.SetTop(lastPoint, height - (data[data.Length - 1] / 100.0 * height) - 4);
             ProgressChartCanvas.Children.Add(lastPoint);
+
+            // X-axis labels (days)
+            string[] xLabels = { "Mon", "Tue", "Wed", "Thu", "Fri" };
+            for (int i = 0; i < xLabels.Length; i++)
+            {
+                TextBlock xLabel = new TextBlock
+                {
+                    Text = xLabels[i],
+                    Foreground = new SolidColorBrush(Color.FromRgb(170,170,170)),
+                    FontSize = 10
+                };
+                Canvas.SetLeft(xLabel, offsetX + i * segmentWidth - 8);
+                Canvas.SetTop(xLabel, height + 6);
+                ProgressChartCanvas.Children.Add(xLabel);
+            }
+        }
+
+        private void ViewAllTasks_Click(object sender, RoutedEventArgs e)
+        {
+            // Ask parent window to navigate to Tasks
+            if (Window.GetWindow(this) is EmployeeDashboard parent)
+            {
+                parent.NavigateToSection("Tasks");
+            }
         }
 
         private void DrawAttendanceChart()

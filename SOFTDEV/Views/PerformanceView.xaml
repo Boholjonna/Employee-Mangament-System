@@ -110,14 +110,49 @@
                                    FontWeight="Bold"
                                    FontSize="18"
                                    Margin="0,0,0,16" />
-                        <Canvas x:Name="PerformanceTrendChart"
-                                Height="250"
-                                Background="Transparent" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Grid.Row="0"
+                                       Text="Performance Score (0-5)"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <RotateTransform Angle="-90" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+
+                            <Canvas x:Name="PerformanceTrendChart"
+                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                    Height="250"
+                                    Background="Transparent" />
+
+                            <TextBlock Grid.Column="1"
+                                       Grid.Row="1"
+                                       Text=" "
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,10,0,0" />
+                        </Grid>
+
                         <TextBlock Text="Last 6 Months"
                                    Foreground="#888888"
                                    FontSize="11"
                                    HorizontalAlignment="Center"
-                                   Margin="0,12,0,0" />
+                                   Margin="0,10,0,0" />
                     </StackPanel>
                 </Border>
 
@@ -219,7 +254,9 @@
                                            FontSize="13"
                                            HorizontalAlignment="Right" />
                             </Grid>
-                            <ProgressBar Value="84" Maximum="100" Height="8" Background="#2a2a3e" Foreground="{StaticResource PurpleAccentBrush}" />
+                            <Border x:Name="YourScoreBar" Height="12" Background="#2a2a3e" CornerRadius="8">
+                                <Border x:Name="YourScoreFill" Background="{StaticResource PurpleAccentBrush}" CornerRadius="8" Width="0" HorizontalAlignment="Left" />
+                            </Border>
                         </StackPanel>
 
                         <StackPanel>
@@ -233,7 +270,9 @@
                                            FontSize="13"
                                            HorizontalAlignment="Right" />
                             </Grid>
-                            <ProgressBar Value="76" Maximum="100" Height="8" Background="#2a2a3e" Foreground="#888888" />
+                            <Border x:Name="TeamAvgBar" Height="12" Background="#2a2a3e" CornerRadius="8">
+                                <Border x:Name="TeamAvgFill" Background="#888888" CornerRadius="8" Width="0" HorizontalAlignment="Left" />
+                            </Border>
                         </StackPanel>
 
                     </StackPanel>

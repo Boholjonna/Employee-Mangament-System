@@ -5,7 +5,7 @@ namespace SOFTDEV
 {
     /// <summary>
     /// Provides MySQL database connectivity using XAMPP (localhost).
-    /// Database : userrole
+    /// Database : employeemangaement
     /// Table    : admin  (columns: id, username, email, password, role)
     /// </summary>
     public static class DatabaseHelper
@@ -16,9 +16,15 @@ namespace SOFTDEV
         private const string ConnectionString =
             "Server=localhost;" +
             "Port=3306;" +
-            "Database=userrole;" +
+            "Database=employeemangaement;" +
             "Uid=root;" +
-            "Pwd=;";          // ← leave empty for default XAMPP root (no password)
+            "Pwd=computerengineering;";
+
+        private const string ServerConnectionString =
+            "Server=localhost;" +
+            "Port=3306;" +
+            "Uid=root;" +
+            "Pwd=computerengineering;";
 
         // ── Open connection ───────────────────────────────────────────────────
 
@@ -28,6 +34,100 @@ namespace SOFTDEV
             var conn = new MySqlConnection(ConnectionString);
             conn.Open();
             return conn;
+        }
+
+        /// <summary>
+        /// Creates the database and required tables if they do not already exist.
+        /// Also inserts a small starter dataset so the app can log in immediately.
+        /// </summary>
+        public static void EnsureDatabaseInitialized()
+        {
+            try
+            {
+                using var conn = new MySqlConnection(ServerConnectionString);
+                conn.Open();
+
+                ExecuteNonQuery(conn, "CREATE DATABASE IF NOT EXISTS employeemangaement");
+                ExecuteNonQuery(conn, "USE employeemangaement");
+
+                ExecuteNonQuery(conn,
+                    "CREATE TABLE IF NOT EXISTS admin (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "name VARCHAR(255) NOT NULL, " +
+                    "username VARCHAR(255) NOT NULL UNIQUE, " +
+                    "email VARCHAR(255) NOT NULL, " +
+                    "password VARCHAR(255) NOT NULL, " +
+                    "role VARCHAR(50) NOT NULL DEFAULT 'admin'" +
+                    ")");
+
+                ExecuteNonQuery(conn,
+                    "CREATE TABLE IF NOT EXISTS employee (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "name VARCHAR(255) NOT NULL, " +
+                    "username VARCHAR(255) NOT NULL UNIQUE, " +
+                    "password VARCHAR(255) NOT NULL, " +
+                    "position VARCHAR(255) NOT NULL, " +
+                    "salary DECIMAL(10,2) NOT NULL DEFAULT 0.00, " +
+                    "payroll DECIMAL(10,2) NOT NULL DEFAULT 0.00, " +
+                    "datehired VARCHAR(50) NOT NULL, " +
+                    "contactno VARCHAR(50) NOT NULL, " +
+                    "address TEXT NOT NULL, " +
+                    "emergencycontact VARCHAR(255) NOT NULL" +
+                    ")");
+
+                ExecuteNonQuery(conn,
+                    "CREATE TABLE IF NOT EXISTS task (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "tasktitle VARCHAR(255) NOT NULL, " +
+                    "description TEXT NOT NULL, " +
+                    "assignedto VARCHAR(255) NOT NULL, " +
+                    "duedate VARCHAR(50) NOT NULL, " +
+                    "INDEX idx_task_assignedto (assignedto)" +
+                    ")");
+
+                ExecuteNonQuery(conn,
+                    "CREATE TABLE IF NOT EXISTS attendance (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "employeename VARCHAR(255) NOT NULL, " +
+                    "`date` DATE NOT NULL, " +
+                    "timein VARCHAR(50) DEFAULT NULL, " +
+                    "timeout VARCHAR(50) DEFAULT NULL, " +
+                    "totalhours VARCHAR(50) DEFAULT NULL, " +
+                    "UNIQUE KEY uq_attendance_employee_date (employeename, `date`), " +
+                    "INDEX idx_attendance_date (`date`), " +
+                    "INDEX idx_attendance_employee (employeename)" +
+                    ")");
+
+                ExecuteNonQuery(conn,
+                    "INSERT IGNORE INTO admin (id, name, username, email, password, role) " +
+                    "VALUES (1, 'System Administrator', 'root', 'root@local', 'computerengineering', 'admin')");
+
+                ExecuteNonQuery(conn,
+                    "INSERT IGNORE INTO employee (id, name, username, password, position, salary, payroll, datehired, contactno, address, emergencycontact) " +
+                    "VALUES " +
+                    "(1, 'Alice Santos', 'alice.santos', 'password123', 'Software Engineer', 65000.00, 5400.00, '2024-01-15', '09171234567', 'Makati City', 'Maria Santos'), " +
+                    "(2, 'Bob Reyes', 'bob.reyes', 'password123', 'Project Manager', 78000.00, 6500.00, '2023-09-01', '09179876543', 'Quezon City', 'Jose Reyes'), " +
+                    "(3, 'Carol Lim', 'carol.lim', 'password123', 'QA Analyst', 52000.00, 4300.00, '2024-03-10', '09175551234', 'Pasig City', 'Anna Lim'), " +
+                    "(4, 'Jonna Cruz', 'jonna@gmail.com', '123', 'HR Assistant', 45000.00, 3750.00, '2025-05-10', '09170000001', 'Taguig City', 'Lorna Cruz')");
+
+                ExecuteNonQuery(conn,
+                    "INSERT IGNORE INTO task (id, tasktitle, description, assignedto, duedate) " +
+                    "VALUES " +
+                    "(1, 'Complete onboarding docs', 'Finish the employee onboarding checklist.', 'Alice Santos', '2026-05-20'), " +
+                    "(2, 'Review sprint backlog', 'Validate tasks for the upcoming sprint.', 'Bob Reyes', '2026-05-22'), " +
+                    "(3, 'Run regression tests', 'Execute regression suite and log defects.', 'Carol Lim', '2026-05-24')");
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] EnsureDatabaseInitialized error: {ex.Message}");
+                throw;
+            }
+        }
+
+        private static void ExecuteNonQuery(MySqlConnection conn, string sql)
+        {
+            using var cmd = new MySqlCommand(sql, conn);
+            cmd.ExecuteNonQuery();
         }
 
         // ── Admin authentication ──────────────────────────────────────────────

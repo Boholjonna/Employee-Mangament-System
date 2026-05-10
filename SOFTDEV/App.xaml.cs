@@ -9,6 +9,11 @@ namespace SOFTDEV
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            DatabaseHelper.EnsureDatabaseInitialized();
+            base.OnStartup(e);
+        }
     }
 
 }

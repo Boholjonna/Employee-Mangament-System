@@ -12,26 +12,39 @@ namespace SOFTDEV.Views
         {
             InitializeComponent();
             DrawCharts();
+            Loaded += (s, e) => DrawCharts();
         }
 
         private void DrawCharts()
         {
             DrawPerformanceTrend();
             DrawKPIBarChart();
+
+            // Set the rounded progress fills for team comparison
+            try
+            {
+                double yourPercent = 84.0;
+                double teamPercent = 76.0;
+                double containerWidth = YourScoreBar?.ActualWidth > 0 ? YourScoreBar.ActualWidth : 200;
+                if (YourScoreFill != null) YourScoreFill.Width = containerWidth * (yourPercent / 100.0);
+                if (TeamAvgFill != null) TeamAvgFill.Width = containerWidth * (teamPercent / 100.0);
+            }
+            catch { }
         }
 
         private void DrawPerformanceTrend()
         {
             PerformanceTrendChart.Children.Clear();
-
-            double width = 700;
-            double height = 250;
+            double width = PerformanceTrendChart.ActualWidth > 0 ? PerformanceTrendChart.ActualWidth : 700;
+            double height = PerformanceTrendChart.ActualHeight > 0 ? PerformanceTrendChart.ActualHeight : 250;
             double[] data = { 3.5, 3.7, 3.9, 4.0, 4.1, 4.2 }; // Monthly scores
+            double bottomLabelSpace = 26;
+            double chartHeight = Math.Max(1, height - bottomLabelSpace);
 
             // Draw grid
             for (int i = 0; i <= 5; i++)
             {
-                double y = height - (i * height / 5);
+                double y = chartHeight - (i * chartHeight / 5);
                 Line gridLine = new Line
                 {
                     X1 = 0,
@@ -49,9 +62,9 @@ namespace SOFTDEV.Views
             for (int i = 0; i < data.Length - 1; i++)
             {
                 double x1 = i * segmentWidth;
-                double y1 = height - ((data[i] / 5.0) * height);
+                double y1 = chartHeight - ((data[i] / 5.0) * chartHeight);
                 double x2 = (i + 1) * segmentWidth;
-                double y2 = height - ((data[i + 1] / 5.0) * height);
+                double y2 = chartHeight - ((data[i + 1] / 5.0) * chartHeight);
 
                 Line line = new Line
                 {
@@ -83,8 +96,29 @@ namespace SOFTDEV.Views
                 Fill = new SolidColorBrush(Color.FromRgb(123, 97, 255))
             };
             Canvas.SetLeft(lastPoint, width - 5);
-            Canvas.SetTop(lastPoint, height - ((data[data.Length - 1] / 5.0) * height) - 5);
+            Canvas.SetTop(lastPoint, chartHeight - ((data[data.Length - 1] / 5.0) * chartHeight) - 5);
             PerformanceTrendChart.Children.Add(lastPoint);
+
+            // Draw month labels for the last 6 months (up to current month)
+            DateTime startMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-(data.Length - 1));
+            for (int i = 0; i < data.Length; i++)
+            {
+                TextBlock monthLabel = new TextBlock
+                {
+                    Text = startMonth.AddMonths(i).ToString("MMM"),
+                    Foreground = new SolidColorBrush(Color.FromRgb(170, 170, 170)),
+                    FontSize = 11,
+                    FontWeight = FontWeights.Medium
+                };
+
+                monthLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                double labelX = (i * segmentWidth) - (monthLabel.DesiredSize.Width / 2);
+                labelX = Math.Max(0, Math.Min(width - monthLabel.DesiredSize.Width, labelX));
+
+                Canvas.SetLeft(monthLabel, labelX);
+                Canvas.SetTop(monthLabel, chartHeight + 6);
+                PerformanceTrendChart.Children.Add(monthLabel);
+            }
         }
 
         private void DrawKPIBarChart()
