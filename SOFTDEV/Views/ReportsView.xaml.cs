@@ -20,7 +20,9 @@ namespace SOFTDEV.Views
         {
             _username = username;
             InitializeComponent();
-            GreetingLabel.Text = $"Hello {username}! 👋";
+            var greetingLabel = FindName("GreetingLabel") as TextBlock;
+            if (greetingLabel != null)
+                greetingLabel.Text = $"Hello {username}! 👋";
             LoadPerformanceData();
         }
 
@@ -28,18 +30,27 @@ namespace SOFTDEV.Views
 
         private void LoadPerformanceData()
         {
+            var emptyLabel = FindName("EmptyLabel") as TextBlock;
+            var performanceTable = FindName("PerformanceTable") as ItemsControl;
+            if (emptyLabel == null || performanceTable == null)
+            {
+                // Current ReportsView layout does not contain the performance table controls.
+                // Keep this view functional without failing compilation/runtime.
+                return;
+            }
+
             var rows = BuildPerformanceRows();
 
             if (rows.Count == 0)
             {
-                EmptyLabel.Visibility    = Visibility.Visible;
-                PerformanceTable.Visibility = Visibility.Collapsed;
+                emptyLabel.Visibility = Visibility.Visible;
+                performanceTable.Visibility = Visibility.Collapsed;
             }
             else
             {
-                EmptyLabel.Visibility    = Visibility.Collapsed;
-                PerformanceTable.Visibility = Visibility.Visible;
-                PerformanceTable.ItemsSource = rows;
+                emptyLabel.Visibility = Visibility.Collapsed;
+                performanceTable.Visibility = Visibility.Visible;
+                performanceTable.ItemsSource = rows;
             }
         }
 
@@ -193,6 +204,32 @@ namespace SOFTDEV.Views
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadPerformanceData();
+        }
+
+        private void PreviewReport_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Report preview is coming soon.", "Preview Report", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void GenerateReport_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Generate and download is coming soon.", "Generate Report", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void QuickReport_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                MessageBox.Show($"{button.Content} is coming soon.", "Quick Report", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            MessageBox.Show("Quick report is coming soon.", "Quick Report", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void DownloadReport_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Download is coming soon.", "Download Report", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 
