@@ -65,6 +65,19 @@
 
         <StackPanel Margin="24,20,24,24">
 
+            <!-- Back button row -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <Button x:Name="BackButton"
+                        Style="{StaticResource CircleButtonStyle}"
+                        Content="←"
+                        Margin="0,0,10,0"
+                        Click="BackButton_Click" />
+                <TextBlock Text="Back to Dashboard"
+                           Foreground="{StaticResource PurpleAccentBrush}"
+                           FontSize="14"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
             <!-- Greeting -->
             <TextBlock x:Name="GreetingLabel"
                        Text="Hello Admin Name! 👋"

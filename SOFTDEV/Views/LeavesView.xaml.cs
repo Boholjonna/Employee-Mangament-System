@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,9 @@ namespace SOFTDEV.Views
     public partial class LeavesView : UserControl
     {
         private readonly string _username;
+
+        /// <summary>Called when the user clicks the Back button. Wire this up before showing the view.</summary>
+        public Action? OnBack { get; set; }
 
         public LeavesView(string username = "Admin")
         {
@@ -128,6 +132,11 @@ namespace SOFTDEV.Views
         };
 
         // ── Event handlers ────────────────────────────────────────────
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            OnBack?.Invoke();
+        }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {

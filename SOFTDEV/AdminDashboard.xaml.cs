@@ -145,6 +145,7 @@ namespace SOFTDEV
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment   = VerticalAlignment.Stretch,
+                OnBack = RestoreDashboardView,
             };
             Grid.SetColumnSpan(reportsView, 3);
             MainContentGrid.Children.Add(reportsView);
@@ -198,6 +199,7 @@ namespace SOFTDEV
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment   = VerticalAlignment.Stretch,
+                OnBack = RestoreDashboardView,
             };
             Grid.SetColumnSpan(leavesView, 3);
             MainContentGrid.Children.Add(leavesView);
@@ -265,10 +267,9 @@ namespace SOFTDEV
         {
             if (sender == OverviewButton)
             {
+                // Stay on the dashboard and highlight Overview as active
                 SetActiveNavButton(OverviewButton);
-                var overviewUI = new AdminOverviewUI(_username, this);
-                this.Hide();
-                overviewUI.Show();
+                RestoreDashboardView();
             }
             else if (sender == EmployeesButton)
             {
