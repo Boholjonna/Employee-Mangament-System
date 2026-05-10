@@ -61,15 +61,27 @@ namespace SOFTDEV
             }
             else if (sender == ToDoButton)
             {
-                Debug.WriteLine("[AttendanceDashboard] Task Management navigation not yet implemented.");
+                // Navigate back to AdminDashboard and open Task Management tab
+                var dashboard = new AdminDashboard(_username);
+                dashboard.Show();
+                this.Close();
+                dashboard.OpenToDoTab();
             }
             else if (sender == ReportsButton)
             {
-                Debug.WriteLine("[AttendanceDashboard] Reports navigation not yet implemented.");
+                // Navigate back to AdminDashboard and open Reports tab
+                var dashboard = new AdminDashboard(_username);
+                dashboard.Show();
+                this.Close();
+                dashboard.OpenReportsTab();
             }
             else if (sender == LeavesButton)
             {
-                Debug.WriteLine("[AttendanceDashboard] Leaves navigation not yet implemented.");
+                // Navigate back to AdminDashboard and open Leaves tab
+                var dashboard = new AdminDashboard(_username);
+                dashboard.Show();
+                this.Close();
+                dashboard.OpenLeavesTab();
             }
             else if (sender == SettingsButton)
             {
