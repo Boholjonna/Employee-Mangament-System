@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using SOFTDEV.ViewModels;
 using SOFTDEV.Views;
+using System.Linq;
 
 namespace SOFTDEV
 {
@@ -50,6 +51,20 @@ namespace SOFTDEV
 
             RefreshCalendar();
             StartLiveClock();
+
+            // Highlight Overview as the active nav button on load
+            SetActiveNavButton(OverviewButton);
+        }
+
+        // ── Nav button highlight helper ───────────────────────────────
+
+        /// <summary>Sets the active nav button to darker purple; all others to lighter purple.</summary>
+        private void SetActiveNavButton(Button active)
+        {
+            var all = new[] { OverviewButton, EmployeesButton, AttendanceButton, ToDoButton, ReportsButton, LeavesButton, SettingsButton };
+            foreach (var btn in all)
+                btn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            active.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
         }
 
         // ── Live clock ────────────────────────────────────────────────
@@ -118,19 +133,33 @@ namespace SOFTDEV
             employeesView.Show();
         }
 
+        /// <summary>Navigates to the Reports tab (Employee Performance table).</summary>
+        private void NavigateToReportsTab()
+        {
+            MainContentGrid.Children.Clear();
+            MainContentGrid.ColumnDefinitions.Clear();
+
+            SetActiveNavButton(ReportsButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
+
+            var reportsView = new ReportsView(_username)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment   = VerticalAlignment.Stretch,
+                OnBack = RestoreDashboardView,
+            };
+            Grid.SetColumnSpan(reportsView, 3);
+            MainContentGrid.Children.Add(reportsView);
+        }
+
         /// <summary>Navigates to the Task Management tab.</summary>
         private void NavigateToToDoTab()
         {
             MainContentGrid.Children.Clear();
             MainContentGrid.ColumnDefinitions.Clear();
 
-            ToDoButton.Background       = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
-            OverviewButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-            EmployeesButton.Background  = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-            AttendanceButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-            ReportsButton.Background    = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-            LeavesButton.Background     = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
-            SettingsButton.Background   = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            SetActiveNavButton(ToDoButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
 
             var vm = new AdminToDoViewModel(_username);
             var todoTab = new AdminToDoTab
@@ -149,6 +178,40 @@ namespace SOFTDEV
             var newDashboard = new AdminDashboard(_username);
             newDashboard.Show();
             this.Close();
+        }
+
+        /// <summary>Back button in the top bar — returns to the default dashboard view.</summary>
+        private void DashboardBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreDashboardView();
+        }
+
+        /// <summary>Called externally to open the Task Management tab immediately after Show().</summary>
+        public void OpenToDoTab() => NavigateToToDoTab();
+
+        /// <summary>Called externally to open the Reports tab immediately after Show().</summary>
+        public void OpenReportsTab() => NavigateToReportsTab();
+
+        /// <summary>Called externally to open the Leaves tab immediately after Show().</summary>
+        public void OpenLeavesTab() => NavigateToLeavesTab();
+
+        /// <summary>Navigates to the Leaves tab.</summary>
+        private void NavigateToLeavesTab()
+        {
+            MainContentGrid.Children.Clear();
+            MainContentGrid.ColumnDefinitions.Clear();
+
+            SetActiveNavButton(LeavesButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
+
+            var leavesView = new LeavesView(_username)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment   = VerticalAlignment.Stretch,
+                OnBack = RestoreDashboardView,
+            };
+            Grid.SetColumnSpan(leavesView, 3);
+            MainContentGrid.Children.Add(leavesView);
         }
 
         // ── Calendar generation ───────────────────────────────────────
@@ -213,16 +276,18 @@ namespace SOFTDEV
         {
             if (sender == OverviewButton)
             {
-                var overviewUI = new AdminOverviewUI(_username, this);
-                this.Hide();
-                overviewUI.Show();
+                // Stay on the dashboard and highlight Overview as active
+                SetActiveNavButton(OverviewButton);
+                RestoreDashboardView();
             }
             else if (sender == EmployeesButton)
             {
+                SetActiveNavButton(EmployeesButton);
                 NavigateToEmployees();
             }
             else if (sender == AttendanceButton)
             {
+                SetActiveNavButton(AttendanceButton);
                 var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
                 this.Hide();
                 attendanceDashboard.Show();
@@ -230,6 +295,14 @@ namespace SOFTDEV
             else if (sender == ToDoButton)
             {
                 NavigateToToDoTab();
+            }
+            else if (sender == ReportsButton)
+            {
+                NavigateToReportsTab();
+            }
+            else if (sender == LeavesButton)
+            {
+                NavigateToLeavesTab();
             }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }

@@ -25,17 +25,35 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!-- ─────────────────────────────────────────────────
-                 TopNavBar — company name left, controls right
+                 TopNavBar — back + banner + name left, controls right
                  ───────────────────────────────────────────────── -->
-            <DockPanel Margin="20,16,20,8" LastChildFill="False">
+            <DockPanel Margin="20,10,20,8" LastChildFill="False">
 
-                <!-- Left: Company name / logo -->
-                <TextBlock DockPanel.Dock="Left"
-                           Text="COMPANY NAME/LOGO"
-                           Foreground="{StaticResource PurpleAccentBrush}"
-                           FontWeight="Bold"
-                           FontSize="18"
-                           VerticalAlignment="Center" />
+                <!-- Left: Back button + Banner + "Nexis" company name -->
+                <StackPanel DockPanel.Dock="Left"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <Button x:Name="BackButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="←"
+                            Margin="0,0,12,0"
+                            Click="BackButton_Click" />
+
+                    <Image Source="/images/nexis_banner.png"
+                           Height="48"
+                           Width="Auto"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+
+                    <TextBlock Text="Nexis"
+                               Foreground="{StaticResource PurpleAccentBrush}"
+                               FontWeight="Bold"
+                               FontSize="22"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
+
+                </StackPanel>
 
                 <!-- Right: Search, Notifications, Avatar, Username -->
                 <StackPanel DockPanel.Dock="Right"
@@ -78,20 +96,13 @@
                          Rows="1"
                          Margin="20,0,20,16">
 
-                <!-- Back button — returns to Admin Dashboard -->
-                <Button x:Name="BackButton"
-                        Style="{StaticResource PillButtonStyle}"
-                        Content="◀ Back"
-                        Margin="0,0,4,0"
-                        Click="BackButton_Click" />
-
                 <!-- OVERVIEW — active tab -->
                 <Button x:Name="OverviewTabButton"
                         Style="{StaticResource PillButtonStyle}"
                         Content="🏠 OVERVIEW"
                         Background="{StaticResource PurpleAccentBrush}"
                         Opacity="1.0"
-                        Margin="4,0,4,0" />
+                        Margin="0,0,4,0" />
 
                 <!-- My Employees — inactive -->
                 <Button x:Name="MyTeamTabButton"

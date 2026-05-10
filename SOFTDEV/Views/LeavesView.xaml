@@ -1,0 +1,274 @@
+<UserControl x:Class="SOFTDEV.Views.LeavesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="{StaticResource DarkBackgroundBrush}">
+
+    <UserControl.Resources>
+
+        <!-- Stat card button style — rounded rectangle, darker purple -->
+        <Style x:Key="StatCardStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#5e4eb7" />
+            <Setter Property="CornerRadius"    Value="14" />
+            <Setter Property="Padding"         Value="20,18" />
+            <Setter Property="Margin"          Value="0,0,0,14" />
+            <Setter Property="MinWidth"        Value="200" />
+        </Style>
+
+        <Style x:Key="StatCardTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground"   Value="White" />
+            <Setter Property="FontWeight"   Value="Bold" />
+            <Setter Property="FontSize"     Value="15" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment"   Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+
+        <!-- Table header cell -->
+        <Style x:Key="LeaveHeaderCellStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#c4b5fd" />
+            <Setter Property="BorderBrush"     Value="#1a1a2e" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+            <Setter Property="Padding"         Value="10,10" />
+            <Setter Property="MinHeight"       Value="44" />
+        </Style>
+
+        <Style x:Key="LeaveHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground"          Value="#1a1a2e" />
+            <Setter Property="FontWeight"          Value="Bold" />
+            <Setter Property="FontSize"            Value="11" />
+            <Setter Property="TextAlignment"       Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment"   Value="Center" />
+            <Setter Property="TextWrapping"        Value="Wrap" />
+        </Style>
+
+        <!-- Table data cell -->
+        <Style x:Key="LeaveDataCellStyle" TargetType="Border">
+            <Setter Property="Background"      Value="#ddd6fe" />
+            <Setter Property="BorderBrush"     Value="#1a1a2e" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+            <Setter Property="Padding"         Value="10,8" />
+            <Setter Property="MinHeight"       Value="48" />
+        </Style>
+
+        <Style x:Key="LeaveDataTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground"          Value="#1a1a2e" />
+            <Setter Property="FontSize"            Value="12" />
+            <Setter Property="TextAlignment"       Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment"   Value="Center" />
+            <Setter Property="TextWrapping"        Value="Wrap" />
+        </Style>
+
+        <!-- Status badge -->
+        <Style x:Key="LeaveStatusBadgeStyle" TargetType="Border">
+            <Setter Property="CornerRadius"        Value="12" />
+            <Setter Property="Padding"             Value="10,4" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer.Resources>
+            <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
+        </ScrollViewer.Resources>
+
+        <StackPanel Margin="24,20,24,24">
+
+            <!-- Greeting -->
+            <TextBlock x:Name="GreetingLabel"
+                       Text="Hello Admin Name! 👋"
+                       Foreground="{StaticResource PurpleAccentBrush}"
+                       FontWeight="Bold"
+                       FontSize="20"
+                       Margin="0,0,0,20" />
+
+            <!-- Main card -->
+            <Border Background="{StaticResource CardBackgroundBrush}"
+                    CornerRadius="14"
+                    Padding="24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <!-- Left: stat cards -->
+                        <ColumnDefinition Width="Auto" />
+                        <!-- Spacer -->
+                        <ColumnDefinition Width="24" />
+                        <!-- Right: table -->
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ── Left: title + stat cards ── -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Top">
+
+                        <TextBlock Text="LEAVES"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,20" />
+
+                        <!-- Pending Requests -->
+                        <Border Style="{StaticResource StatCardStyle}">
+                            <TextBlock x:Name="PendingLabel"
+                                       Text="Pending Request: 0"
+                                       Style="{StaticResource StatCardTextStyle}" />
+                        </Border>
+
+                        <!-- Approved Leaves -->
+                        <Border Style="{StaticResource StatCardStyle}">
+                            <TextBlock x:Name="ApprovedLabel"
+                                       Text="Approved Leaves: 0"
+                                       Style="{StaticResource StatCardTextStyle}" />
+                        </Border>
+
+                        <!-- Employees on Leave -->
+                        <Border Style="{StaticResource StatCardStyle}">
+                            <TextBlock x:Name="OnLeaveLabel"
+                                       Text="Employees on Leave: 0"
+                                       Style="{StaticResource StatCardTextStyle}" />
+                        </Border>
+
+                        <!-- Refresh button -->
+                        <Button x:Name="RefreshButton"
+                                Style="{StaticResource PillButtonStyle}"
+                                Content="↻  Refresh"
+                                Height="38"
+                                Margin="0,8,0,0"
+                                Click="RefreshButton_Click" />
+
+                    </StackPanel>
+
+                    <!-- ── Right: leave table ── -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Table border wrapper -->
+                        <Border Grid.Row="0"
+                                BorderBrush="#1a1a2e"
+                                BorderThickness="1,1,0,0"
+                                CornerRadius="8"
+                                ClipToBounds="True">
+                            <StackPanel>
+
+                                <!-- Header row -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1.4*" />
+                                        <ColumnDefinition Width="1.2*" />
+                                        <ColumnDefinition Width="1.2*" />
+                                        <ColumnDefinition Width="1.2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Style="{StaticResource LeaveHeaderCellStyle}">
+                                        <TextBlock Text="employee and department"
+                                                   Style="{StaticResource LeaveHeaderTextStyle}" />
+                                    </Border>
+                                    <Border Grid.Column="1" Style="{StaticResource LeaveHeaderCellStyle}">
+                                        <TextBlock Text="leave type"
+                                                   Style="{StaticResource LeaveHeaderTextStyle}" />
+                                    </Border>
+                                    <Border Grid.Column="2" Style="{StaticResource LeaveHeaderCellStyle}">
+                                        <TextBlock Text="start date"
+                                                   Style="{StaticResource LeaveHeaderTextStyle}" />
+                                    </Border>
+                                    <Border Grid.Column="3" Style="{StaticResource LeaveHeaderCellStyle}">
+                                        <TextBlock Text="end date"
+                                                   Style="{StaticResource LeaveHeaderTextStyle}" />
+                                    </Border>
+                                    <Border Grid.Column="4" Style="{StaticResource LeaveHeaderCellStyle}">
+                                        <TextBlock Text="status"
+                                                   Style="{StaticResource LeaveHeaderTextStyle}" />
+                                    </Border>
+                                </Grid>
+
+                                <!-- Data rows -->
+                                <ItemsControl x:Name="LeavesTable">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="1.4*" />
+                                                    <ColumnDefinition Width="1.2*" />
+                                                    <ColumnDefinition Width="1.2*" />
+                                                    <ColumnDefinition Width="1.2*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Employee + Department -->
+                                                <Border Grid.Column="0" Style="{StaticResource LeaveDataCellStyle}">
+                                                    <StackPanel HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding EmployeeName}"
+                                                                   Style="{StaticResource LeaveDataTextStyle}"
+                                                                   FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding Department}"
+                                                                   Foreground="#555"
+                                                                   FontSize="11"
+                                                                   TextAlignment="Center"
+                                                                   HorizontalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border Grid.Column="1" Style="{StaticResource LeaveDataCellStyle}">
+                                                    <TextBlock Text="{Binding LeaveType}"
+                                                               Style="{StaticResource LeaveDataTextStyle}" />
+                                                </Border>
+
+                                                <Border Grid.Column="2" Style="{StaticResource LeaveDataCellStyle}">
+                                                    <TextBlock Text="{Binding StartDate}"
+                                                               Style="{StaticResource LeaveDataTextStyle}" />
+                                                </Border>
+
+                                                <Border Grid.Column="3" Style="{StaticResource LeaveDataCellStyle}">
+                                                    <TextBlock Text="{Binding EndDate}"
+                                                               Style="{StaticResource LeaveDataTextStyle}" />
+                                                </Border>
+
+                                                <!-- Status badge -->
+                                                <Border Grid.Column="4" Style="{StaticResource LeaveDataCellStyle}">
+                                                    <Border Style="{StaticResource LeaveStatusBadgeStyle}"
+                                                            Background="{Binding StatusColor}">
+                                                        <TextBlock Text="{Binding Status}"
+                                                                   Foreground="White"
+                                                                   FontSize="11"
+                                                                   FontWeight="SemiBold"
+                                                                   HorizontalAlignment="Center" />
+                                                    </Border>
+                                                </Border>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Empty state -->
+                        <TextBlock Grid.Row="1"
+                                   x:Name="EmptyLabel"
+                                   Text="No leave records found."
+                                   Foreground="#aaaaaa"
+                                   FontSize="14"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,20,0,0"
+                                   Visibility="Collapsed" />
+
+                    </Grid>
+
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

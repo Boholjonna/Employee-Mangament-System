@@ -193,7 +193,6 @@
                                                     Padding="16,0"
                                                     VerticalAlignment="Center"
                                                     Click="DownloadReport_Click" />
-
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

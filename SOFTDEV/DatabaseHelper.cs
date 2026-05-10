@@ -531,6 +531,58 @@ namespace SOFTDEV
             }
         }
 
+        // ── Leave requests ────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns all rows from the <c>leaverequest</c> table ordered by start date descending.
+        /// Returns an empty list if the table doesn't exist or a DB error occurs.
+        /// </summary>
+        public static List<Views.LeaveItem> GetAllLeaveRequests()
+        {
+            var list = new List<Views.LeaveItem>();
+            try
+            {
+                using var conn = GetConnection();
+
+                const string sql =
+                    "SELECT employeename, department, leavetype, startdate, enddate, status " +
+                    "FROM leaverequest " +
+                    "ORDER BY startdate DESC";
+
+                using var cmd    = new MySqlCommand(sql, conn);
+                using var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    string status = reader.IsDBNull(5) ? "Pending" : reader.GetString(5);
+                    string color  = status.ToLower() switch
+                    {
+                        "approved" => "#2ecc71",
+                        "rejected" => "#e74c3c",
+                        "pending"  => "#f39c12",
+                        _          => "#7b61ff",
+                    };
+
+                    list.Add(new Views.LeaveItem
+                    {
+                        EmployeeName = reader.IsDBNull(0) ? "" : reader.GetString(0),
+                        Department   = reader.IsDBNull(1) ? "" : reader.GetString(1),
+                        LeaveType    = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                        StartDate    = reader.IsDBNull(3) ? "" : reader.GetString(3),
+                        EndDate      = reader.IsDBNull(4) ? "" : reader.GetString(4),
+                        Status       = status,
+                        StatusColor  = new System.Windows.Media.SolidColorBrush(
+                            (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color)),
+                    });
+                }
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetAllLeaveRequests error: {ex.Message}");
+            }
+            return list;
+        }
+
         // ── Attendance records ────────────────────────────────────────────────
 
         /// <summary>

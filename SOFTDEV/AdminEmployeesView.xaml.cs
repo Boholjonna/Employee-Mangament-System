@@ -98,15 +98,31 @@ namespace SOFTDEV
         {
             if (sender == OverviewButton)
             {
-                var overviewUI = new AdminOverviewUI(_username, this);
-                this.Hide();
-                overviewUI.Show();
+                // Go back to the dashboard (Overview is the default dashboard view)
+                _ownerDashboard?.Show();
+                this.Close();
             }
             else if (sender == AttendanceButton)
             {
                 var attendanceDashboard = new AttendanceDashboard(_username) { Owner = this };
                 this.Hide();
                 attendanceDashboard.Show();
+            }
+            else if (sender == ToDoButton || sender == ReportsButton || sender == LeavesButton)
+            {
+                // Navigate back to the dashboard and open the requested tab
+                if (_ownerDashboard is AdminDashboard dashboard)
+                {
+                    dashboard.Show();
+                    this.Close();
+
+                    if (sender == ToDoButton)
+                        dashboard.OpenToDoTab();
+                    else if (sender == ReportsButton)
+                        dashboard.OpenReportsTab();
+                    else if (sender == LeavesButton)
+                        dashboard.OpenLeavesTab();
+                }
             }
             Debug.WriteLine(nameof(NavButton_Click));
         }

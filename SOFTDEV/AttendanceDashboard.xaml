@@ -29,11 +29,11 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!-- ─────────────────────────────────────────────────
-                 TopNavBar — company logo left, control group right
+                 TopNavBar — back + banner + name left, controls right
                  ───────────────────────────────────────────────── -->
-            <DockPanel Margin="20,16,20,8" LastChildFill="False">
+            <DockPanel Margin="20,10,20,8" LastChildFill="False">
 
-                <!-- Left: Back button + Company name / logo -->
+                <!-- Left: Back button + Banner + "Nexis" company name -->
                 <StackPanel DockPanel.Dock="Left"
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
@@ -44,11 +44,18 @@
                             Margin="0,0,12,0"
                             Click="BackButton_Click" />
 
-                    <TextBlock Text="COMPANY NAME/LOGO"
+                    <Image Source="/images/nexis_banner.png"
+                           Height="48"
+                           Width="Auto"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+
+                    <TextBlock Text="Nexis"
                                Foreground="{StaticResource PurpleAccentBrush}"
                                FontWeight="Bold"
-                               FontSize="18"
-                               VerticalAlignment="Center" />
+                               FontSize="22"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
 
                 </StackPanel>
 
