@@ -3,215 +3,336 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:SOFTDEV.Views"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200"
              Background="{StaticResource DarkBackgroundBrush}">
 
-    <UserControl.Resources>
-
-        <!-- Header cell style -->
-        <Style x:Key="HeaderCellStyle" TargetType="Border">
-            <Setter Property="Background"   Value="#c4b5fd" />
-            <Setter Property="BorderBrush"  Value="#1a1a2e" />
-            <Setter Property="BorderThickness" Value="0,0,1,1" />
-            <Setter Property="Padding"      Value="10,10" />
-            <Setter Property="MinHeight"    Value="48" />
-        </Style>
-
-        <!-- Header text style -->
-        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground"       Value="#1a1a2e" />
-            <Setter Property="FontWeight"       Value="Bold" />
-            <Setter Property="FontSize"         Value="11" />
-            <Setter Property="TextAlignment"    Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment"   Value="Center" />
-            <Setter Property="TextWrapping"     Value="Wrap" />
-        </Style>
-
-        <!-- Data cell style -->
-        <Style x:Key="DataCellStyle" TargetType="Border">
-            <Setter Property="Background"      Value="#ddd6fe" />
-            <Setter Property="BorderBrush"     Value="#1a1a2e" />
-            <Setter Property="BorderThickness" Value="0,0,1,1" />
-            <Setter Property="Padding"         Value="10,8" />
-            <Setter Property="MinHeight"       Value="44" />
-        </Style>
-
-        <!-- Data text style -->
-        <Style x:Key="DataTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground"          Value="#1a1a2e" />
-            <Setter Property="FontSize"            Value="13" />
-            <Setter Property="TextAlignment"       Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment"   Value="Center" />
-            <Setter Property="TextWrapping"        Value="Wrap" />
-        </Style>
-
-        <!-- Status badge style -->
-        <Style x:Key="StatusBadgeStyle" TargetType="Border">
-            <Setter Property="CornerRadius"        Value="12" />
-            <Setter Property="Padding"             Value="12,4" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-        </Style>
-
-    </UserControl.Resources>
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
         <ScrollViewer.Resources>
             <Style TargetType="ScrollBar" BasedOn="{StaticResource CustomScrollbarStyle}" />
         </ScrollViewer.Resources>
 
-        <StackPanel Margin="24,20,24,24">
+        <Grid Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
 
-            <!-- Greeting -->
-            <TextBlock x:Name="GreetingLabel"
-                       Text="Hello Admin Name! 👋"
-                       Foreground="{StaticResource PurpleAccentBrush}"
-                       FontWeight="Bold"
-                       FontSize="20"
-                       Margin="0,0,0,20" />
+            <!-- Main Content -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
 
-            <!-- Employee Performance Card -->
-            <Border Background="{StaticResource CardBackgroundBrush}"
-                    CornerRadius="14"
-                    Padding="20">
-                <StackPanel>
+                <TextBlock Text="Reports"
+                           Foreground="{StaticResource PurpleAccentBrush}"
+                           FontWeight="Bold"
+                           FontSize="28"
+                           Margin="0,0,0,20" />
 
-                    <!-- Card title row -->
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
-                                   Text="Employee Performance"
-                                   Foreground="White"
+                <!-- Generate Report Section -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Generate New Report"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
                                    FontWeight="Bold"
                                    FontSize="18"
-                                   VerticalAlignment="Center" />
+                                   Margin="0,0,0,20" />
 
-                        <!-- Refresh button -->
-                        <Button Grid.Column="1"
-                                x:Name="RefreshButton"
-                                Style="{StaticResource CircleButtonStyle}"
-                                Content="↻"
-                                ToolTip="Refresh data"
-                                Click="RefreshButton_Click" />
-                    </Grid>
-
-                    <!-- ── Table ── -->
-                    <Border BorderBrush="#1a1a2e"
-                            BorderThickness="1,1,0,0"
-                            CornerRadius="8"
-                            ClipToBounds="True">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <!-- Header row -->
-                                <RowDefinition Height="Auto" />
-                                <!-- Data rows via ItemsControl -->
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                            <!-- ── Header Row ── -->
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="1.4*" />
-                                    <ColumnDefinition Width="1.4*" />
-                                    <ColumnDefinition Width="1.4*" />
-                                    <ColumnDefinition Width="1.6*" />
-                                    <ColumnDefinition Width="1.4*" />
-                                </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="Report Type"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="ReportTypeComboBox"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
+                                          Margin="0,0,0,16">
+                                    <ComboBoxItem Content="Task Summary" IsSelected="True" />
+                                    <ComboBoxItem Content="Attendance Report" />
+                                    <ComboBoxItem Content="Performance Report" />
+                                    <ComboBoxItem Content="Complete Report" />
+                                </ComboBox>
 
-                                <Border Grid.Column="0" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="EMPLOYEE" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                                <Border Grid.Column="1" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="DEPARTMENT" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                                <Border Grid.Column="2" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="TASK" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                                <Border Grid.Column="3" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="ATTENDANCE %" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                                <Border Grid.Column="4" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="PERFORMANCE SCORE" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                                <Border Grid.Column="5" Style="{StaticResource HeaderCellStyle}">
-                                    <TextBlock Text="STATUS" Style="{StaticResource HeaderTextStyle}" />
-                                </Border>
-                            </Grid>
+                                <TextBlock Text="Date Range"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="DateRangeComboBox"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
+                                          Margin="0,0,0,16">
+                                    <ComboBoxItem Content="This Week" />
+                                    <ComboBoxItem Content="This Month" IsSelected="True" />
+                                    <ComboBoxItem Content="Last Month" />
+                                    <ComboBoxItem Content="This Quarter" />
+                                    <ComboBoxItem Content="This Year" />
+                                    <ComboBoxItem Content="Custom Range" />
+                                </ComboBox>
 
-                            <!-- ── Data Rows ── -->
-                            <ItemsControl Grid.Row="1"
-                                          x:Name="PerformanceTable">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="1.4*" />
-                                                <ColumnDefinition Width="1.4*" />
-                                                <ColumnDefinition Width="1.4*" />
-                                                <ColumnDefinition Width="1.6*" />
-                                                <ColumnDefinition Width="1.4*" />
-                                            </Grid.ColumnDefinitions>
+                                <TextBlock Text="Export Format"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <ComboBox x:Name="ExportFormatComboBox"
+                                          Style="{StaticResource RoundedComboBoxStyle}">
+                                    <ComboBoxItem Content="PDF" IsSelected="True" />
+                                    <ComboBoxItem Content="Excel (XLSX)" />
+                                    <ComboBoxItem Content="CSV" />
+                                    <ComboBoxItem Content="JSON" />
+                                </ComboBox>
+                            </StackPanel>
 
-                                            <Border Grid.Column="0" Style="{StaticResource DataCellStyle}">
-                                                <TextBlock Text="{Binding EmployeeName}"
-                                                           Style="{StaticResource DataTextStyle}" />
-                                            </Border>
-                                            <Border Grid.Column="1" Style="{StaticResource DataCellStyle}">
-                                                <TextBlock Text="{Binding Department}"
-                                                           Style="{StaticResource DataTextStyle}" />
-                                            </Border>
-                                            <Border Grid.Column="2" Style="{StaticResource DataCellStyle}">
-                                                <TextBlock Text="{Binding TaskSummary}"
-                                                           Style="{StaticResource DataTextStyle}" />
-                                            </Border>
-                                            <Border Grid.Column="3" Style="{StaticResource DataCellStyle}">
-                                                <TextBlock Text="{Binding AttendancePercent}"
-                                                           Style="{StaticResource DataTextStyle}" />
-                                            </Border>
-                                            <Border Grid.Column="4" Style="{StaticResource DataCellStyle}">
-                                                <TextBlock Text="{Binding PerformanceScore}"
-                                                           Style="{StaticResource DataTextStyle}" />
-                                            </Border>
-                                            <!-- Status badge -->
-                                            <Border Grid.Column="5" Style="{StaticResource DataCellStyle}">
-                                                <Border Style="{StaticResource StatusBadgeStyle}"
-                                                        Background="{Binding StatusColor}">
-                                                    <TextBlock Text="{Binding Status}"
-                                                               Foreground="White"
-                                                               FontSize="11"
-                                                               FontWeight="SemiBold"
-                                                               HorizontalAlignment="Center" />
-                                                </Border>
-                                            </Border>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                                <TextBlock Text="Custom Date Range"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <DatePicker x:Name="StartDatePicker"
+                                            Style="{StaticResource RoundedDatePickerStyle}"
+                                            Margin="0,0,0,12" />
+
+                                <TextBlock Text="End Date"
+                                           Foreground="#aaaaaa"
+                                           FontSize="11"
+                                           Margin="0,0,0,4" />
+                                <DatePicker x:Name="EndDatePicker"
+                                            Style="{StaticResource RoundedDatePickerStyle}"
+                                            Margin="0,0,0,16" />
+
+                                <CheckBox Content="Include Charts"
+                                          Style="{StaticResource RoleCheckBoxStyle}"
+                                          IsChecked="True"
+                                          Margin="0,0,0,8" />
+                                <CheckBox Content="Include Summary"
+                                          Style="{StaticResource RoleCheckBoxStyle}"
+                                          IsChecked="True"
+                                          Margin="0,0,0,8" />
+                                <CheckBox Content="Include Details"
+                                          Style="{StaticResource RoleCheckBoxStyle}"
+                                          IsChecked="True" />
+                            </StackPanel>
 
                         </Grid>
-                    </Border>
 
-                    <!-- Empty state -->
-                    <TextBlock x:Name="EmptyLabel"
-                               Text="No performance data available."
-                               Foreground="#aaaaaa"
-                               FontSize="14"
-                               HorizontalAlignment="Center"
-                               Margin="0,24,0,8"
-                               Visibility="Collapsed" />
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                </StackPanel>
-            </Border>
+                            <Button Grid.Column="0"
+                                    Content="Preview Report"
+                                    Style="{StaticResource OutlinePillButtonStyle}"
+                                    Height="48"
+                                    Margin="0,0,12,0"
+                                    Click="PreviewReport_Click" />
 
-        </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="📥 Generate &amp; Download"
+                                    Style="{StaticResource PillButtonStyle}"
+                                    Height="48"
+                                    Padding="32,0"
+                                    Click="GenerateReport_Click" />
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Recent Reports -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Recent Reports"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,16" />
+
+                        <ItemsControl x:Name="RecentReportsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#1a1a2e"
+                                            CornerRadius="8"
+                                            Padding="16"
+                                            Margin="0,0,0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Icon}"
+                                                       FontSize="24"
+                                                       Margin="0,0,16,0"
+                                                       VerticalAlignment="Center" />
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="White"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="14" />
+                                                <TextBlock Text="{Binding Details}"
+                                                           Foreground="#aaaaaa"
+                                                           FontSize="11"
+                                                           Margin="0,4,0,0" />
+                                            </StackPanel>
+
+                                            <Button Grid.Column="2"
+                                                    Content="Download"
+                                                    Style="{StaticResource OutlinePillButtonStyle}"
+                                                    Height="32"
+                                                    Padding="16,0"
+                                                    VerticalAlignment="Center"
+                                                    Click="DownloadReport_Click" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+            <!-- Sidebar -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+
+                <!-- Quick Reports -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Quick Reports"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <Button Content="📊 This Week Summary"
+                                Style="{StaticResource PillButtonStyle}"
+                                Height="44"
+                                Margin="0,0,0,8"
+                                Click="QuickReport_Click" />
+
+                        <Button Content="📅 Monthly Report"
+                                Style="{StaticResource OutlinePillButtonStyle}"
+                                Height="44"
+                                Margin="0,0,0,8"
+                                Click="QuickReport_Click" />
+
+                        <Button Content="⏰ Attendance Log"
+                                Style="{StaticResource OutlinePillButtonStyle}"
+                                Height="44"
+                                Margin="0,0,0,8"
+                                Click="QuickReport_Click" />
+
+                        <Button Content="✅ Task Completion"
+                                Style="{StaticResource OutlinePillButtonStyle}"
+                                Height="44"
+                                Click="QuickReport_Click" />
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Report Statistics -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Report Statistics"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,16" />
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="Total Reports Generated"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="47"
+                                       Foreground="White"
+                                       FontWeight="Bold"
+                                       FontSize="24"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,12">
+                            <TextBlock Text="This Month"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="8 reports"
+                                       Foreground="{StaticResource PurpleAccentBrush}"
+                                       FontWeight="Bold"
+                                       FontSize="18"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="Most Generated"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11" />
+                            <TextBlock Text="Task Summary"
+                                       Foreground="White"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       Margin="0,4,0,0" />
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- Help -->
+                <Border Background="{StaticResource CardBackgroundBrush}"
+                        CornerRadius="12"
+                        Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="💡 Tips"
+                                   Foreground="{StaticResource PurpleAccentBrush}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Margin="0,0,0,12" />
+
+                        <TextBlock Text="• Use custom date ranges for specific periods"
+                                   Foreground="#aaaaaa"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,8" />
+
+                        <TextBlock Text="• Include charts for visual insights"
+                                   Foreground="#aaaaaa"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,8" />
+
+                        <TextBlock Text="• Export to Excel for further analysis"
+                                   Foreground="#aaaaaa"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,8" />
+
+                        <TextBlock Text="• Preview before downloading"
+                                   Foreground="#aaaaaa"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+
+        </Grid>
+
     </ScrollViewer>
 </UserControl>

@@ -101,23 +101,99 @@
                                    FontSize="20"
                                    VerticalAlignment="Center" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <ComboBox x:Name="TaskFilterComboBox"
-                                      Width="140"
-                                      Height="36"
-                                      Margin="0,0,12,0"
+                                <ComboBox x:Name="TaskFilterComboBox"
+                                      Width="160"
+                                      Style="{StaticResource RoundedComboBoxStyle}"
                                       SelectionChanged="TaskFilter_Changed">
-                                <ComboBoxItem Content="All Tasks" IsSelected="True" />
-                                <ComboBoxItem Content="In Progress" />
-                                <ComboBoxItem Content="Completed" />
-                                <ComboBoxItem Content="Not Started" />
-                            </ComboBox>
-                            <Button Content="+ New Task"
+                                    <ComboBoxItem Content="All Tasks" IsSelected="True" />
+                                    <ComboBoxItem Content="In Progress" />
+                                    <ComboBoxItem Content="Completed" />
+                                    <ComboBoxItem Content="Not Started" />
+                                </ComboBox>
+                                <Button x:Name="NewTaskToggleButton"
+                                    Content="  + Add New Task  "
                                     Style="{StaticResource PillButtonStyle}"
-                                    Height="36"
-                                    Padding="20,0"
-                                    Click="AddTask_Click" />
+                                    Height="44"
+                                    MinWidth="260"
+                                    Padding="48,0"
+                                    Margin="20,0,0,0"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Click="NewTaskToggleButton_Click" />
                         </StackPanel>
                     </Grid>
+
+                    <!-- Add Task Panel (collapsible) -->
+                    <StackPanel x:Name="AddTaskPanel" Visibility="Collapsed" Margin="0,0,0,16">
+                        <TextBlock Text="New Task" Foreground="White" FontWeight="Bold" FontSize="16" Margin="0,0,0,12" />
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,12">
+                            <TextBlock Text="Task Title"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       Margin="0,0,0,4" />
+                            <TextBox x:Name="NewTaskTitle"
+                                     Style="{StaticResource RoundedTextBoxStyle}"
+                                     Margin="0,0,0,12" />
+                            
+                            <TextBlock Text="Description"
+                                       Foreground="#aaaaaa"
+                                       FontSize="11"
+                                       Margin="0,0,0,4" />
+                            <TextBox x:Name="NewTaskDescription"
+                                     Style="{StaticResource RoundedTextBoxStyle}"
+                                     Height="80"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     Margin="0,0,0,12" />
+                            
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                    <TextBlock Text="Due Date"
+                                               Foreground="#aaaaaa"
+                                               FontSize="11"
+                                               Margin="0,0,0,4" />
+                                    <DatePicker x:Name="NewTaskDueDate"
+                                                Style="{StaticResource RoundedDatePickerStyle}"
+                                                Width="180" />
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Estimated Hours"
+                                               Foreground="#aaaaaa"
+                                               FontSize="11"
+                                               Margin="0,0,0,4" />
+                                    <TextBox x:Name="NewTaskEstimatedHours"
+                                             Style="{StaticResource RoundedTextBoxStyle}"
+                                             Width="120" />
+                                </StackPanel>
+                            </Grid>
+                            
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                <Button Content="Save"
+                                        Style="{StaticResource PillButtonStyle}"
+                                        Click="SaveNewTask_Click"
+                                        Height="40"
+                                        MinWidth="150"
+                                        Padding="34,0"
+                                        Margin="0,0,12,0"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+                                <Button Content="Cancel"
+                                        Style="{StaticResource OutlinePillButtonStyle}"
+                                        Click="CancelNewTask_Click"
+                                        Height="40"
+                                        MinWidth="150"
+                                        Padding="34,0"
+                                        FontSize="14"
+                                        FontWeight="SemiBold" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
 
                     <ScrollViewer MaxHeight="600" VerticalScrollBarVisibility="Auto">
                         <Grid>
@@ -139,7 +215,9 @@
                                                           IsChecked="{Binding IsCompleted}"
                                                           Style="{StaticResource RoleCheckBoxStyle}"
                                                           Margin="0,0,16,0"
-                                                          VerticalAlignment="Center" />
+                                                          VerticalAlignment="Center"
+                                                          Checked="TaskCompleted_Checked"
+                                                          Unchecked="TaskCompleted_Unchecked" />
 
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding Title}"
@@ -162,6 +240,11 @@
                                                                        FontWeight="Bold" />
                                                         </Border>
                                                         <TextBlock Text="{Binding DueDate}"
+                                                                   Foreground="#888888"
+                                                                   FontSize="12"
+                                                                   VerticalAlignment="Center" />
+                                                        <TextBlock Text=", " Foreground="#888888" FontSize="12" />
+                                                        <TextBlock Text="Est: {Binding EstimatedHours}h"
                                                                    Foreground="#888888"
                                                                    FontSize="12"
                                                                    VerticalAlignment="Center" />

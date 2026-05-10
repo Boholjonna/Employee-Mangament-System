@@ -83,7 +83,7 @@
                                            FontSize="11"
                                            Margin="0,0,0,4" />
                                 <ComboBox x:Name="StatusFilterComboBox"
-                                          Height="36"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
                                           SelectionChanged="Filter_Changed">
                                     <ComboBoxItem Content="All Status" IsSelected="True" />
                                     <ComboBoxItem Content="Not Started" />
@@ -98,7 +98,7 @@
                                            FontSize="11"
                                            Margin="0,0,0,4" />
                                 <ComboBox x:Name="PriorityFilterComboBox"
-                                          Height="36"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
                                           SelectionChanged="Filter_Changed">
                                     <ComboBoxItem Content="All Priority" IsSelected="True" />
                                     <ComboBoxItem Content="High" />
@@ -113,7 +113,7 @@
                                            FontSize="11"
                                            Margin="0,0,0,4" />
                                 <ComboBox x:Name="DeadlineFilterComboBox"
-                                          Height="36"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
                                           SelectionChanged="Filter_Changed">
                                     <ComboBoxItem Content="All Deadlines" IsSelected="True" />
                                     <ComboBoxItem Content="Overdue" />
@@ -128,7 +128,7 @@
                                            FontSize="11"
                                            Margin="0,0,0,4" />
                                 <ComboBox x:Name="SortComboBox"
-                                          Height="36"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
                                           SelectionChanged="Sort_Changed">
                                     <ComboBoxItem Content="Deadline (Nearest)" IsSelected="True" />
                                     <ComboBoxItem Content="Priority (High)" />

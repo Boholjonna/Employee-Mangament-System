@@ -24,31 +24,11 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!-- ─────────────────────────────────────────────────
-                 Control Group (top-right: search, bell, user, avatar)
+                 Control Group (top-right: profile only)
                  ───────────────────────────────────────────────── -->
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="20,16,20,8">
-
-                <Button x:Name="SearchButton"
-                        Style="{StaticResource CircleButtonStyle}"
-                        Content="🔍"
-                        Margin="0,0,8,0"
-                        Click="SearchButton_Click" />
-
-                <Button x:Name="NotificationButton"
-                        Style="{StaticResource CircleButtonStyle}"
-                        Content="🔔"
-                        Margin="0,0,8,0"
-                        Click="NotificationButton_Click" />
-
-                <Button x:Name="UserNameButton"
-                        Style="{StaticResource PillButtonStyle}"
-                        Content="NAME"
-                        Width="80"
-                        Height="30"
-                        Margin="0,0,8,0"
-                        Click="UserNameButton_Click" />
 
                 <Button x:Name="AvatarButton"
                         Style="{StaticResource CircleButtonStyle}"

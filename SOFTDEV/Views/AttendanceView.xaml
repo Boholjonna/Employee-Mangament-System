@@ -196,8 +196,8 @@
                                        VerticalAlignment="Center" />
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <ComboBox x:Name="MonthFilterComboBox"
-                                          Width="140"
-                                          Height="32"
+                                          Width="160"
+                                          Style="{StaticResource RoundedComboBoxStyle}"
                                           SelectionChanged="MonthFilter_Changed">
                                     <ComboBoxItem Content="May 2026" IsSelected="True" />
                                     <ComboBoxItem Content="April 2026" />
@@ -345,7 +345,7 @@
                                    FontSize="11"
                                    Margin="0,0,0,4" />
                         <ComboBox x:Name="LeaveTypeComboBox"
-                                  Height="36"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
                                   Margin="0,0,0,12">
                             <ComboBoxItem Content="Vacation" IsSelected="True" />
                             <ComboBoxItem Content="Sick Leave" />
@@ -358,7 +358,7 @@
                                    FontSize="11"
                                    Margin="0,0,0,4" />
                         <DatePicker x:Name="StartDatePicker"
-                                    Height="36"
+                                    Style="{StaticResource RoundedDatePickerStyle}"
                                     Margin="0,0,0,12" />
 
                         <TextBlock Text="End Date"
@@ -366,7 +366,7 @@
                                    FontSize="11"
                                    Margin="0,0,0,4" />
                         <DatePicker x:Name="EndDatePicker"
-                                    Height="36"
+                                    Style="{StaticResource RoundedDatePickerStyle}"
                                     Margin="0,0,0,12" />
 
                         <TextBlock Text="Reason"

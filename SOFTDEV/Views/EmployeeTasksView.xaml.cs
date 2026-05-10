@@ -9,6 +9,7 @@ namespace SOFTDEV.Views
     {
         private readonly string _employeeName;
         private List<TaskItem> _allTasks = new();
+        private bool _addPanelVisible = false;
 
         /// <summary>
         /// Creates the view and loads tasks assigned to the given employee from the database.
@@ -40,6 +41,95 @@ namespace SOFTDEV.Views
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading tasks: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void NewTaskToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            _addPanelVisible = !_addPanelVisible;
+            if (AddTaskPanel != null)
+                AddTaskPanel.Visibility = _addPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void SaveNewTask_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string title = NewTaskTitle?.Text?.Trim() ?? string.Empty;
+                string desc = NewTaskDescription?.Text?.Trim() ?? string.Empty;
+                string due = NewTaskDueDate?.SelectedDate?.ToString("yyyy-MM-dd") ?? string.Empty;
+                string est = NewTaskEstimatedHours?.Text?.Trim() ?? string.Empty;
+
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    MessageBox.Show("Please enter a task title.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var newTask = new TaskItem
+                {
+                    Title = title,
+                    Description = desc,
+                    DueDate = string.IsNullOrEmpty(due) ? "" : "Due: " + due,
+                    EstimatedHours = est,
+                    Status = "Not Started",
+                    StatusColor = "#7b61ff",
+                    IsCompleted = false
+                };
+
+                // Add to in-memory list and refresh UI
+                _allTasks.Insert(0, newTask);
+                TaskListControl.ItemsSource = null;
+                TaskListControl.ItemsSource = _allTasks;
+                UpdateEmptyState();
+                UpdateStatCards();
+
+                // Persist basic task to DB (estimated hours not persisted currently)
+                DatabaseHelper.SaveTask(newTask.Title, newTask.Description, _employeeName, NewTaskDueDate?.SelectedDate?.ToString("yyyy-MM-dd") ?? "");
+
+                // Hide add panel and clear
+                AddTaskPanel.Visibility = Visibility.Collapsed;
+                _addPanelVisible = false;
+                NewTaskTitle.Text = string.Empty;
+                NewTaskDescription.Text = string.Empty;
+                NewTaskEstimatedHours.Text = string.Empty;
+                NewTaskDueDate.SelectedDate = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving task: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void CancelNewTask_Click(object sender, RoutedEventArgs e)
+        {
+            AddTaskPanel.Visibility = Visibility.Collapsed;
+            _addPanelVisible = false;
+        }
+
+        private void TaskCompleted_Checked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox cb && cb.DataContext is TaskItem t)
+            {
+                t.IsCompleted = true;
+                t.Status = "Completed";
+                t.StatusColor = "#4caf50";
+                TaskListControl.ItemsSource = null;
+                TaskListControl.ItemsSource = _allTasks;
+                UpdateStatCards();
+            }
+        }
+
+        private void TaskCompleted_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox cb && cb.DataContext is TaskItem t)
+            {
+                t.IsCompleted = false;
+                t.Status = "In Progress";
+                t.StatusColor = "#ff9800";
+                TaskListControl.ItemsSource = null;
+                TaskListControl.ItemsSource = _allTasks;
+                UpdateStatCards();
             }
         }
 
