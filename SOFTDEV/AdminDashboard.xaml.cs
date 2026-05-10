@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using SOFTDEV.ViewModels;
 using SOFTDEV.Views;
+using System.Linq;
 
 namespace SOFTDEV
 {
@@ -116,6 +117,27 @@ namespace SOFTDEV
             var employeesView = new AdminEmployeesView(_username, this);
             this.Hide();
             employeesView.Show();
+        }
+
+        /// <summary>Navigates to the Reports tab (Employee Performance table).</summary>
+        private void NavigateToReportsTab()
+        {
+            MainContentGrid.Children.Clear();
+            MainContentGrid.ColumnDefinitions.Clear();
+
+            // Highlight the active nav button
+            var allNavButtons = new[] { OverviewButton, EmployeesButton, AttendanceButton, ToDoButton, ReportsButton, LeavesButton, SettingsButton };
+            foreach (var btn in allNavButtons)
+                btn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#a294f9"));
+            ReportsButton.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#5e4eb7"));
+
+            var reportsView = new ReportsView(_username)
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment   = VerticalAlignment.Stretch,
+            };
+            Grid.SetColumnSpan(reportsView, 3);
+            MainContentGrid.Children.Add(reportsView);
         }
 
         /// <summary>Navigates to the Task Management tab.</summary>
@@ -230,6 +252,10 @@ namespace SOFTDEV
             else if (sender == ToDoButton)
             {
                 NavigateToToDoTab();
+            }
+            else if (sender == ReportsButton)
+            {
+                NavigateToReportsTab();
             }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }
