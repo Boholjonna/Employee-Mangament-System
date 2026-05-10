@@ -25,11 +25,22 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!-- ─────────────────────────────────────────────────
-                 Control Group (top-right: search, bell, user, avatar)
+                 Control Group (logo left, search/bell/user/avatar right)
                  ───────────────────────────────────────────────── -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="20,16,20,8">
+            <DockPanel Margin="20,16,20,8" LastChildFill="False">
+
+                <!-- Left: Nexis Corp. logo -->
+                <Image DockPanel.Dock="Left"
+                       Source="/images/nexis_logo.png"
+                       Height="40"
+                       Width="Auto"
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality" />
+
+                <!-- Right: Search, Notifications, Username, Avatar -->
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
 
                 <Button x:Name="SearchButton"
                         Style="{StaticResource CircleButtonStyle}"
@@ -56,7 +67,8 @@
                         Content="👤"
                         Click="AvatarButton_Click" />
 
-            </StackPanel>
+                </StackPanel>
+            </DockPanel>
 
             <!-- ─────────────────────────────────────────────────
                  Navigation Bar — equal-width buttons spanning full width

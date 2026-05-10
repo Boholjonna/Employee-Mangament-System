@@ -44,11 +44,12 @@
                             Margin="0,0,12,0"
                             Click="BackButton_Click" />
 
-                    <TextBlock Text="COMPANY NAME/LOGO"
-                               Foreground="{StaticResource PurpleAccentBrush}"
-                               FontWeight="Bold"
-                               FontSize="18"
-                               VerticalAlignment="Center" />
+                    <!-- Nexis Corp. logo -->
+                    <Image Source="/images/nexis_logo.png"
+                           Height="40"
+                           Width="Auto"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
 
                 </StackPanel>
 

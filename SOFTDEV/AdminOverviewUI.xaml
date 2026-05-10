@@ -29,13 +29,13 @@
                  ───────────────────────────────────────────────── -->
             <DockPanel Margin="20,16,20,8" LastChildFill="False">
 
-                <!-- Left: Company name / logo -->
-                <TextBlock DockPanel.Dock="Left"
-                           Text="COMPANY NAME/LOGO"
-                           Foreground="{StaticResource PurpleAccentBrush}"
-                           FontWeight="Bold"
-                           FontSize="18"
-                           VerticalAlignment="Center" />
+                <!-- Left: Nexis Corp. logo -->
+                <Image DockPanel.Dock="Left"
+                       Source="/images/nexis_logo.png"
+                       Height="40"
+                       Width="Auto"
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality" />
 
                 <!-- Right: Search, Notifications, Avatar, Username -->
                 <StackPanel DockPanel.Dock="Right"
