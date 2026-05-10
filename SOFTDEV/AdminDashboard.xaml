@@ -25,47 +25,59 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!-- ─────────────────────────────────────────────────
-                 Control Group (logo left, search/bell/user/avatar right)
+                 Top Bar — banner+name left, controls right
                  ───────────────────────────────────────────────── -->
-            <DockPanel Margin="20,16,20,8" LastChildFill="False">
+            <DockPanel Margin="20,10,20,8" LastChildFill="False">
 
-                <!-- Left: Nexis Corp. logo -->
-                <Image DockPanel.Dock="Left"
-                       Source="/images/nexis_logo.png"
-                       Height="40"
-                       Width="Auto"
-                       VerticalAlignment="Center"
-                       RenderOptions.BitmapScalingMode="HighQuality" />
+                <!-- Left: Banner + "Nexis" company name -->
+                <StackPanel DockPanel.Dock="Left"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <Image Source="/images/nexis_banner.png"
+                           Height="48"
+                           Width="Auto"
+                           VerticalAlignment="Center"
+                           RenderOptions.BitmapScalingMode="HighQuality" />
+
+                    <TextBlock Text="Nexis"
+                               Foreground="{StaticResource PurpleAccentBrush}"
+                               FontWeight="Bold"
+                               FontSize="22"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
+
+                </StackPanel>
 
                 <!-- Right: Search, Notifications, Username, Avatar -->
                 <StackPanel DockPanel.Dock="Right"
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
 
-                <Button x:Name="SearchButton"
-                        Style="{StaticResource CircleButtonStyle}"
-                        Content="🔍"
-                        Margin="0,0,8,0"
-                        Click="SearchButton_Click" />
+                    <Button x:Name="SearchButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="🔍"
+                            Margin="0,0,8,0"
+                            Click="SearchButton_Click" />
 
-                <Button x:Name="NotificationButton"
-                        Style="{StaticResource CircleButtonStyle}"
-                        Content="🔔"
-                        Margin="0,0,8,0"
-                        Click="NotificationButton_Click" />
+                    <Button x:Name="NotificationButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="🔔"
+                            Margin="0,0,8,0"
+                            Click="NotificationButton_Click" />
 
-                <Button x:Name="UserNameButton"
-                        Style="{StaticResource PillButtonStyle}"
-                        Content="NAME"
-                        Width="80"
-                        Height="30"
-                        Margin="0,0,8,0"
-                        Click="UserNameButton_Click" />
+                    <Button x:Name="UserNameButton"
+                            Style="{StaticResource PillButtonStyle}"
+                            Content="NAME"
+                            Width="80"
+                            Height="30"
+                            Margin="0,0,8,0"
+                            Click="UserNameButton_Click" />
 
-                <Button x:Name="AvatarButton"
-                        Style="{StaticResource CircleButtonStyle}"
-                        Content="👤"
-                        Click="AvatarButton_Click" />
+                    <Button x:Name="AvatarButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="👤"
+                            Click="AvatarButton_Click" />
 
                 </StackPanel>
             </DockPanel>

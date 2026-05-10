@@ -11,6 +11,7 @@
   <ItemGroup>
     <Folder Include="images\" />
     <Resource Include="images\nexis_logo.png" />
+    <Resource Include="images\nexis_banner.png" />
   </ItemGroup>
 
   <ItemGroup>
