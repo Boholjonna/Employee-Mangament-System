@@ -140,6 +140,7 @@ namespace SOFTDEV
             MainContentGrid.ColumnDefinitions.Clear();
 
             SetActiveNavButton(ReportsButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
 
             var reportsView = new ReportsView(_username)
             {
@@ -158,6 +159,7 @@ namespace SOFTDEV
             MainContentGrid.ColumnDefinitions.Clear();
 
             SetActiveNavButton(ToDoButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
 
             var vm = new AdminToDoViewModel(_username);
             var todoTab = new AdminToDoTab
@@ -178,6 +180,12 @@ namespace SOFTDEV
             this.Close();
         }
 
+        /// <summary>Back button in the top bar — returns to the default dashboard view.</summary>
+        private void DashboardBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreDashboardView();
+        }
+
         /// <summary>Called externally to open the Task Management tab immediately after Show().</summary>
         public void OpenToDoTab() => NavigateToToDoTab();
 
@@ -194,6 +202,7 @@ namespace SOFTDEV
             MainContentGrid.ColumnDefinitions.Clear();
 
             SetActiveNavButton(LeavesButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
 
             var leavesView = new LeavesView(_username)
             {

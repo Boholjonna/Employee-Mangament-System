@@ -34,6 +34,14 @@
                             Orientation="Horizontal"
                             VerticalAlignment="Center">
 
+                    <!-- Back button — visible only when a tab (Reports/Leaves/ToDo) is active -->
+                    <Button x:Name="DashboardBackButton"
+                            Style="{StaticResource CircleButtonStyle}"
+                            Content="←"
+                            Margin="0,0,12,0"
+                            Visibility="Collapsed"
+                            Click="DashboardBackButton_Click" />
+
                     <Image Source="/images/nexis_banner.png"
                            Height="48"
                            Width="Auto"
