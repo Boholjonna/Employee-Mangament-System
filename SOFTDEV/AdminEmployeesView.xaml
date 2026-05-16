@@ -79,8 +79,10 @@
                     <Button x:Name="UserNameButton"
                             Style="{StaticResource PillButtonStyle}"
                             Content="NAME"
-                            Width="80"
-                            Height="30"
+                            MinWidth="120"
+                            MaxWidth="220"
+                            Height="34"
+                            Padding="16,0"
                             Margin="0,0,8,0"
                             Click="UserNameButton_Click" />
 

@@ -34,7 +34,8 @@
                 <Button x:Name="NotificationButton" Style="{StaticResource CircleButtonStyle}"
                         Content="🔔" Margin="0,0,8,0" Click="NotificationButton_Click" />
                 <Button x:Name="UserNameButton" Style="{StaticResource PillButtonStyle}"
-                        Width="90" Height="32" Margin="0,0,8,0" Click="UserNameButton_Click" />
+                        MinWidth="120" MaxWidth="220" Height="34" Padding="16,0"
+                        Margin="0,0,8,0" Click="UserNameButton_Click" />
                 <Button x:Name="AvatarButton" Style="{StaticResource CircleButtonStyle}"
                         Content="👤" Click="AvatarButton_Click" />
             </StackPanel>
