@@ -59,9 +59,14 @@ namespace SOFTDEV
             }
             else if (RoleManager.IsChecked == true)
             {
-                // TODO: Open Manager Dashboard
-                MessageBox.Show("Manager Dashboard coming soon!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
+                string? managerName = DatabaseHelper.GetManagerName(username, password);
+                if (managerName == null)
+                {
+                    ErrorMessageText.Text = "Invalid manager username or password.";
+                    ErrorMessageText.Visibility = Visibility.Visible;
+                    return;
+                }
+                OpenManagerDashboard(managerName);
             }
             else
             {
@@ -129,6 +134,11 @@ namespace SOFTDEV
         }
 
         // ── Navigation ───────────────────────────────────────────────────────
+
+        public void OpenManagerDashboard(string managerName)
+        {
+            new ManagerDashboard(managerName).Show();
+        }
 
         public void OpenAdminDashboard(string username)
         {

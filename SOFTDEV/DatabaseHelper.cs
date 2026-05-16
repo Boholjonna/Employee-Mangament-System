@@ -18,13 +18,13 @@ namespace SOFTDEV
             "Port=3306;" +
             "Database=employeemangaement;" +
             "Uid=root;" +
-            "Pwd=computerengineering;";
+            "Pwd=;";
 
         private const string ServerConnectionString =
             "Server=localhost;" +
             "Port=3306;" +
             "Uid=root;" +
-            "Pwd=computerengineering;";
+            "Pwd=;";
 
         // ── Open connection ───────────────────────────────────────────────────
 
@@ -100,7 +100,7 @@ namespace SOFTDEV
 
                 ExecuteNonQuery(conn,
                     "INSERT IGNORE INTO admin (id, name, username, email, password, role) " +
-                    "VALUES (1, 'System Administrator', 'root', 'root@local', 'computerengineering', 'admin')");
+                    "VALUES (1, 'System Administrator', 'root', 'root@local', '', 'admin')");
 
                 ExecuteNonQuery(conn,
                     "INSERT IGNORE INTO employee (id, name, username, password, position, salary, payroll, datehired, contactno, address, emergencycontact) " +
@@ -128,6 +128,56 @@ namespace SOFTDEV
         {
             using var cmd = new MySqlCommand(sql, conn);
             cmd.ExecuteNonQuery();
+        }
+
+        // ── Manager authentication ────────────────────────────────────────────
+
+        /// <summary>
+        /// Checks whether the supplied credentials match a row in the <c>manager</c> table.
+        /// </summary>
+        public static bool AuthenticateManager(string username, string password)
+        {
+            try
+            {
+                using var conn = GetConnection();
+                const string sql =
+                    "SELECT COUNT(*) FROM manager " +
+                    "WHERE username = @username AND password = @password";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+                long count = (long)(cmd.ExecuteScalar() ?? 0L);
+                return count > 0;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] AuthenticateManager error: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns the <c>name</c> column for the manager matching the supplied credentials.
+        /// </summary>
+        public static string? GetManagerName(string username, string password)
+        {
+            try
+            {
+                using var conn = GetConnection();
+                const string sql =
+                    "SELECT name FROM manager " +
+                    "WHERE username = @username AND password = @password " +
+                    "LIMIT 1";
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
+                return cmd.ExecuteScalar() as string;
+            }
+            catch (MySqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DB] GetManagerName error: {ex.Message}");
+                return null;
+            }
         }
 
         // ── Admin authentication ──────────────────────────────────────────────
