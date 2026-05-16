@@ -49,7 +49,7 @@ namespace SOFTDEV
 
             _username       = username;
             _ownerDashboard = ownerDashboard;
-            UsernameLabel.Text = username;
+            UserNameButton.Content = username;
 
             LoadTaskData();
             LoadPerformanceData();

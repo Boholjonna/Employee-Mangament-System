@@ -44,6 +44,7 @@ namespace SOFTDEV
             InitializeComponent();
 
             GreetingText.Text        = $"Hello, {username}!";
+            UserNameButton.Content   = username;
             AttendanceDateLabel.Text = DateTime.Today.ToString("MMMM dd, yyyy");
 
             LoadEmployees();
@@ -195,6 +196,25 @@ namespace SOFTDEV
         /// <summary>Called externally to open the Leaves tab immediately after Show().</summary>
         public void OpenLeavesTab() => NavigateToLeavesTab();
 
+        /// <summary>Navigates to the Settings tab.</summary>
+        private void NavigateToSettingsTab()
+        {
+            MainContentGrid.Children.Clear();
+            MainContentGrid.ColumnDefinitions.Clear();
+
+            SetActiveNavButton(SettingsButton);
+            DashboardBackButton.Visibility = Visibility.Visible;
+
+            var settingsView = new SOFTDEV.Views.AdminSettingsView
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment   = VerticalAlignment.Stretch,
+                OnBack = RestoreDashboardView,
+            };
+            Grid.SetColumnSpan(settingsView, 3);
+            MainContentGrid.Children.Add(settingsView);
+        }
+
         /// <summary>Navigates to the Leaves tab.</summary>
         private void NavigateToLeavesTab()
         {
@@ -276,9 +296,10 @@ namespace SOFTDEV
         {
             if (sender == OverviewButton)
             {
-                // Stay on the dashboard and highlight Overview as active
                 SetActiveNavButton(OverviewButton);
-                RestoreDashboardView();
+                var overviewUI = new AdminOverviewUI(_username, this);
+                this.Hide();
+                overviewUI.Show();
             }
             else if (sender == EmployeesButton)
             {
@@ -303,6 +324,10 @@ namespace SOFTDEV
             else if (sender == LeavesButton)
             {
                 NavigateToLeavesTab();
+            }
+            else if (sender == SettingsButton)
+            {
+                NavigateToSettingsTab();
             }
             System.Diagnostics.Debug.WriteLine(nameof(NavButton_Click));
         }
